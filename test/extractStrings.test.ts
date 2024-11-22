@@ -4,38 +4,38 @@ import path from 'path';
 
 const expectedPricingStrings = [
   {
-    file: '/Users/ed/Code/next-auto-intl/test/fixtures/Pricing.tsx',
+    file: path.resolve(__dirname, 'fixtures', 'Pricing.tsx'),
     componentName: 'Pricing',
     string: 'Pricing',
     identifier: 'pricing',
   },
   {
-    file: '/Users/ed/Code/next-auto-intl/test/fixtures/Pricing.tsx',
+    file: path.resolve(__dirname, 'fixtures', 'Pricing.tsx'),
     componentName: 'Pricing',
     string: 'Free for most people, cheap for everyone else.',
     identifier: 'free-for-most-people-cheap',
   },
   {
-    file: '/Users/ed/Code/next-auto-intl/test/fixtures/Pricing.tsx',
+    file: path.resolve(__dirname, 'fixtures', 'Pricing.tsx'),
     componentName: 'Pricing',
     string:
       'Track up to 100 items for free, or upgrade to a paid plan for more',
     identifier: 'track-up-to-100-items',
   },
   {
-    file: '/Users/ed/Code/next-auto-intl/test/fixtures/Pricing.tsx',
+    file: path.resolve(__dirname, 'fixtures', 'Pricing.tsx'),
     componentName: 'Pricing',
     string: 'Most popular',
     identifier: 'most-popular',
   },
   {
-    file: '/Users/ed/Code/next-auto-intl/test/fixtures/Pricing.tsx',
+    file: path.resolve(__dirname, 'fixtures', 'Pricing.tsx'),
     componentName: 'Pricing',
     string: '/month',
     identifier: 'month',
   },
   {
-    file: '/Users/ed/Code/next-auto-intl/test/fixtures/Pricing.tsx',
+    file: path.resolve(__dirname, 'fixtures', 'Pricing.tsx'),
     componentName: 'Pricing',
     string: 'Choose plan',
     identifier: 'choose-plan',
@@ -44,25 +44,25 @@ const expectedPricingStrings = [
 
 const expectedRegisterPageStrings = [
   {
-    file: '/Users/ed/Code/next-auto-intl/test/fixtures/RegisterPage.tsx',
+    file: path.resolve(__dirname, 'fixtures', 'RegisterPage.tsx'),
     componentName: 'RegisterPage',
     string: 'Sign Up',
     identifier: 'sign-up',
   },
   {
-    file: '/Users/ed/Code/next-auto-intl/test/fixtures/RegisterPage.tsx',
+    file: path.resolve(__dirname, 'fixtures', 'RegisterPage.tsx'),
     componentName: 'RegisterPage',
     string: 'Create an account with your email and password',
     identifier: 'create-an-account-with-your',
   },
   {
-    file: '/Users/ed/Code/next-auto-intl/test/fixtures/RegisterPage.tsx',
+    file: path.resolve(__dirname, 'fixtures', 'RegisterPage.tsx'),
     componentName: 'RegisterPage',
     string: 'Sign Up',
     identifier: 'sign-up',
   },
   {
-    file: '/Users/ed/Code/next-auto-intl/test/fixtures/RegisterPage.tsx',
+    file: path.resolve(__dirname, 'fixtures', 'RegisterPage.tsx'),
     componentName: 'RegisterPage',
     string: 'Sign in',
     identifier: 'sign-in',
