@@ -6,7 +6,11 @@
     "strict": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "outDir": "./dist",
+    "declaration": true,
+    "declarationDir": "./dist/types"
   },
-  "include": ["src", "test", "jest.config.ts"]
+  "include": ["src", "test", "jest.config.ts"],
+  "exclude": ["test/fixtures"]
 }
