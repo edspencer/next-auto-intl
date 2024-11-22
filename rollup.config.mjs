@@ -22,6 +22,7 @@ export default [
       commonjs(), // Convert CommonJS modules to ES6
       typescript({
         tsconfig: './tsconfig.json',
+        useTsconfigDeclarationDir: true,
         exclude: ['test/**/*', 'src/script/**/*'], // Exclude test files from being bundled
       }),
     ],

@@ -26,7 +26,7 @@ const config: Configuration = {
   lintAfterRewrite: true,
 };
 
-async function main(config: Configuration) {
+export async function autoI18n(config: Configuration) {
   const allStrings = findAllStrings(config);
 
   console.log(`Found ${allStrings.length} internationalizable strings`);
@@ -59,5 +59,3 @@ async function main(config: Configuration) {
     await processComponent(component, config);
   }
 }
-
-main(config).catch((error) => console.error(error));

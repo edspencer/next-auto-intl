@@ -1,4 +1,4 @@
-import { StringInfo } from "../types";
+import { StringInfo } from '../types';
 
 /**
  * Detects duplicate component names in an array of StringInfo objects.

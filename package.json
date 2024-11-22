@@ -2,20 +2,25 @@
   "name": "next-auto-intl",
   "version": "0.1.1",
   "description": "Uses AI to automatically internationalize your Next.js app",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "bin": {
+    "next-auto-intl": "bin/cli.js"
+  },
   "scripts": {
     "test": "pnpm jest",
     "build": "tsc && rollup -c",
     "build:watch": "concurrently \"tsc --watch\" \"rollup -c --watch\"",
     "ci:version": "changeset version",
-    "ci:publish": "tsc && rollup -c && changeset publish"
+    "ci:publish": "tsc && rollup -c && changeset publish",
+    "check-exports": "attw --pack ."
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/edspencer/next-auto-intl.git"
   },
   "files": [
-    "dist"
+    "dist",
+    "bin"
   ],
   "keywords": [
     "react",
@@ -40,9 +45,11 @@
     "@types/babel__traverse": "^7.20.6",
     "@types/jest": "^29.5.14",
     "ai": "^4.0.2",
+    "commander": "^12.1.0",
     "dotenv": "^16.4.5",
     "eslint": "^9.15.0",
     "glob": "^11.0.0",
+    "inquirer": "^12.1.0",
     "jest": "^29.7.0",
     "openai": "^4.73.0",
     "rollup": "^4.27.3",
@@ -54,6 +61,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.0",
     "@changesets/cli": "^2.27.10",
     "@types/glob": "^8.1.0",
     "@types/node": "^22.9.1",

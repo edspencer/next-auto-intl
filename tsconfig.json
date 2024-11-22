@@ -2,15 +2,16 @@
   "compilerOptions": {
     "module": "ESNext",
     "moduleResolution": "node",
-    "target": "ESNext",
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
     "strict": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "outDir": "./dist",
     "declaration": true,
-    "declarationDir": "./dist/types"
+    "declarationDir": "./dist"
   },
-  "include": ["src", "test", "jest.config.ts"],
-  "exclude": ["test/fixtures"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["test", "test/fixtures", "jest.config.ts", "node_modules"]
 }
