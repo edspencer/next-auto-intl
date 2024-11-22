@@ -10,25 +10,25 @@ const componentStrings: ComponentStrings = {
   file: '',
   strings: [
     {
-      file: '/Users/ed/Code/next-auto-intl/test/fixtures/RegisterPage.tsx',
+      file: path.resolve(__dirname, 'fixtures', 'RegisterPage.tsx'),
       componentName: 'RegisterPage',
       string: 'Sign Up',
       identifier: 'sign-up',
     },
     {
-      file: '/Users/ed/Code/next-auto-intl/test/fixtures/RegisterPage.tsx',
+      file: path.resolve(__dirname, 'fixtures', 'RegisterPage.tsx'),
       componentName: 'RegisterPage',
       string: 'Create an account with your email and password',
       identifier: 'create-an-account-with-your',
     },
     {
-      file: '/Users/ed/Code/next-auto-intl/test/fixtures/RegisterPage.tsx',
+      file: path.resolve(__dirname, 'fixtures', 'RegisterPage.tsx'),
       componentName: 'RegisterPage',
       string: 'Sign Up',
       identifier: 'sign-up',
     },
     {
-      file: '/Users/ed/Code/next-auto-intl/test/fixtures/RegisterPage.tsx',
+      file: path.resolve(__dirname, 'fixtures', 'RegisterPage.tsx'),
       componentName: 'RegisterPage',
       string: 'Sign in',
       identifier: 'sign-in',
