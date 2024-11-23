@@ -5,7 +5,7 @@ import { duplicateNameDetector } from './duplicateNameDetector';
 import { translateComponent, rewriteComponent } from './componentTools';
 import { convertToComponentStrings } from './convertToComponentStrings';
 import { findAllStrings } from './findAllStrings';
-import { createMessagesObject, saveTranslations } from './saveTranslations';
+import { createMessagesObject, saveTranslations } from './translationTools';
 
 export async function autoI18n(config: Configuration) {
   const allStrings = findAllStrings(config);

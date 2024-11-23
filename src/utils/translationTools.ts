@@ -1,9 +1,17 @@
-import languages from '../data/languages';
 import z from 'zod';
 import { generateObject } from 'ai';
+import fs from 'fs';
+import path from 'path';
 import { openai } from '@ai-sdk/openai';
 
-import { TranslationItem, MessagesObject } from '../types';
+import languages from '../data/languages';
+
+import {
+  TranslationItem,
+  MessagesObject,
+  StringInfo,
+  Configuration,
+} from '../types';
 
 export async function translateStrings(
   strings: TranslationItem[],
@@ -70,4 +78,44 @@ function generateTranslationPrompt(
   For each translation you will be given the original text, a unique identifier for the string, and the componentName of the
   React component that has the string rendered inside of it. Please return a JSON array of objects, 
   with each object containing "identifier", "original" and "translation" fields:\n\n${examples}`;
+}
+
+export function saveTranslations(
+  messages: MessagesObject,
+  locale: string,
+  config: Configuration
+) {
+  //load the existing messages
+  let existingMessages = {};
+
+  const localeFile = path.join(config.messagesDir!, `${locale}.json`);
+  console.log('loading existing translations from', localeFile);
+  try {
+    existingMessages = JSON.parse(fs.readFileSync(localeFile, 'utf8'));
+  } catch (e) {
+    console.log(`No existing messages found for locale ${locale}`);
+  }
+
+  //merge the new messages with the existing ones
+  const newMessages = { ...existingMessages, ...messages };
+
+  console.log('saving translations to', localeFile);
+
+  //save the new messages
+  fs.writeFileSync(localeFile, JSON.stringify(newMessages, null, 2));
+}
+
+export function createMessagesObject(strings: StringInfo[]): MessagesObject {
+  const messages: {
+    [componentName: string]: { [identifier: string]: string };
+  } = {};
+
+  strings.forEach((info) => {
+    if (!messages[info.componentName]) {
+      messages[info.componentName] = {};
+    }
+    messages[info.componentName][info.identifier] = info.string;
+  });
+
+  return messages;
 }

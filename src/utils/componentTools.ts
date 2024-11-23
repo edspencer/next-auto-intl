@@ -3,8 +3,7 @@ import fs from 'fs';
 import path from 'path';
 
 import { updateSource } from './updateSource';
-import { translateStrings } from './translateStrings';
-import { saveTranslations } from './saveTranslations';
+import { translateStrings, saveTranslations } from './translationTools';
 
 import { ComponentStrings, TranslationItem, Configuration } from '../types';
 
@@ -54,11 +53,11 @@ export async function rewriteComponent(
 
   if (rewriteSourceFiles) {
     try {
-      fs.writeFileSync(component.file, formatWithPrettier(updated))
-    } catch(e) {
+      fs.writeFileSync(component.file, formatWithPrettier(updated));
+    } catch (e) {
       console.error('Error writing file');
       console.error(e);
-      return false
+      return false;
     }
   }
 
@@ -66,7 +65,7 @@ export async function rewriteComponent(
     console.log('Linting with eslint --fix:', component.file);
     try {
       execSync(`npx eslint --fix "${component.file}"`);
-    } catch(e) {
+    } catch (e) {
       console.error('Error running eslint --fix');
       console.error(e);
       return false;
