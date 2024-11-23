@@ -51,10 +51,13 @@ export async function processComponent(
 
   if (lintAfterRewrite) {
     console.log('Linting with eslint --fix:', component.file);
-    execSync(`npx eslint --fix ${component.file}`);
+    try {
+      execSync(`npx eslint --fix "${component.file}"`);
+    } catch(e) {
+      console.error('Error running eslint --fix');
+      console.error(e);
+    }
   }
-
-  // console.log(formatWithPrettier(updated));
 }
 
 function formatWithPrettier(code: string): string {
