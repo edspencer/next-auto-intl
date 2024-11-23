@@ -5,7 +5,13 @@ import path from 'path';
 import { updateSource } from './updateSource';
 import { translateStrings, saveTranslations } from './translationTools';
 
-import { ComponentStrings, TranslationItem, Configuration } from '../types';
+import {
+  ComponentStrings,
+  TranslationItem,
+  Configuration,
+  MessagesObject,
+  ComponentStringsMap,
+} from '../types';
 
 export async function translateComponent(
   component: ComponentStrings,
@@ -15,17 +21,23 @@ export async function translateComponent(
   const { baseLanguage, targetLanguages = [] } = config;
 
   //create the translations
-  const translationItems: TranslationItem[] = component.strings.map(
-    ({ identifier, string }) => {
-      return {
-        componentName,
-        original: string,
-        identifier,
-        translation: '',
-        baseLanguage,
-      };
-    }
+  const baseTranslations = loadTranslations(
+    componentName,
+    baseLanguage,
+    config
   );
+
+  const translationItems: TranslationItem[] = Object.entries(
+    baseTranslations
+  ).map(([identifier, string]) => {
+    return {
+      componentName,
+      original: string,
+      identifier,
+      translation: '',
+      baseLanguage,
+    };
+  });
 
   console.log('Translation items for', componentName);
   console.log(translationItems);
@@ -42,23 +54,43 @@ export async function translateComponent(
   }
 }
 
+export function loadTranslations(
+  componentName: string,
+  targetLanguage: string,
+  config: Configuration
+): ComponentStringsMap {
+  const messagesDir = config.messagesDir || './i18n/messages';
+  const messagesFile = path.resolve(messagesDir, `${targetLanguage}.json`);
+
+  console.log(`Loading messages for ${componentName} from ${messagesFile}`);
+
+  try {
+    const messages = fs.readFileSync(messagesFile, 'utf8');
+    return JSON.parse(messages)[componentName] || {};
+  } catch (e) {
+    console.error('Error loading messages');
+    console.error(e);
+    return {};
+  }
+}
+
 export async function rewriteComponent(
   component: ComponentStrings,
   config: Configuration
 ): Promise<boolean> {
-  const { rewriteSourceFiles, lintAfterRewrite } = config;
+  const { lintAfterRewrite } = config;
+
+  console.log('Rewriting component:', component.componentName);
 
   const source = fs.readFileSync(component.file, 'utf8');
   const updated = updateSource(source, component);
 
-  if (rewriteSourceFiles) {
-    try {
-      fs.writeFileSync(component.file, formatWithPrettier(updated));
-    } catch (e) {
-      console.error('Error writing file');
-      console.error(e);
-      return false;
-    }
+  try {
+    fs.writeFileSync(component.file, formatWithPrettier(updated));
+  } catch (e) {
+    console.error('Error writing file');
+    console.error(e);
+    return false;
   }
 
   if (lintAfterRewrite) {

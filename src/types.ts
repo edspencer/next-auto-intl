@@ -54,8 +54,10 @@ export interface ComponentFileStrings {
   components: ComponentStrings[];
 }
 
+export interface ComponentStringsMap {
+  [identifier: string]: string;
+}
+
 export interface MessagesObject {
-  [componentName: string]: {
-    [identifier: string]: string;
-  };
+  [componentName: string]: ComponentStringsMap;
 }

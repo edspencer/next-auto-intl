@@ -19,7 +19,7 @@ export async function translateStrings(
 ): Promise<MessagesObject> {
   const prompt = generateTranslationPrompt(strings, targetLanguage);
 
-  console.log(prompt);
+  // console.log(prompt);
 
   const { object } = await generateObject({
     model: openai('gpt-4o-mini'),
@@ -39,7 +39,7 @@ export async function translateStrings(
   return createMessageObjectFromTranslations(object);
 }
 
-export function createMessageObjectFromTranslations(
+function createMessageObjectFromTranslations(
   translations: TranslationItem[]
 ): MessagesObject {
   const messages: {
