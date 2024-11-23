@@ -41,7 +41,7 @@ export function updateSource(
           node.specifiers.some(
             (spec) =>
               t.isImportSpecifier(spec) &&
-              t.isIdentifier(spec.imported) && // Ensure `spec.imported` is an Identifier
+              t.isIdentifier(spec.imported) &&
               spec.imported.name === 'useTranslations'
           )
       );
@@ -90,7 +90,7 @@ export function updateSource(
     },
 
     JSXElement(path) {
-      // Replace detected strings with translations
+      // Replace detected strings in children with translations
       path.node.children.forEach((child, index) => {
         if (t.isJSXText(child)) {
           const textValue = child.value.trim();
@@ -101,6 +101,29 @@ export function updateSource(
 
           if (textValue && componentString) {
             path.node.children[index] = t.jsxExpressionContainer(
+              t.callExpression(t.identifier('t'), [
+                t.stringLiteral(componentString.identifier),
+              ])
+            );
+          }
+        }
+      });
+
+      // Replace detected strings in attributes with translations
+      path.node.openingElement.attributes.forEach((attr) => {
+        if (
+          t.isJSXAttribute(attr) &&
+          t.isJSXIdentifier(attr.name) &&
+          t.isStringLiteral(attr.value)
+        ) {
+          const attrValue = attr.value.value;
+
+          const componentString = strings.find(
+            ({ string }) => string === attrValue
+          );
+
+          if (componentString) {
+            attr.value = t.jsxExpressionContainer(
               t.callExpression(t.identifier('t'), [
                 t.stringLiteral(componentString.identifier),
               ])
