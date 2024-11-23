@@ -8,12 +8,12 @@ import { saveTranslations } from './saveTranslations';
 
 import { ComponentStrings, TranslationItem, Configuration } from '../types';
 
-export async function processComponent(
+export async function translateComponent(
   component: ComponentStrings,
   config: Configuration
 ) {
   const { componentName } = component;
-  const { baseLanguage, targetLanguages = [], rewriteSourceFiles, lintAfterRewrite } = config;
+  const { baseLanguage, targetLanguages = [] } = config;
 
   //create the translations
   const translationItems: TranslationItem[] = component.strings.map(
@@ -23,7 +23,7 @@ export async function processComponent(
         original: string,
         identifier,
         translation: '',
-        originalLanguage: baseLanguage,
+        baseLanguage,
       };
     }
   );
@@ -41,12 +41,25 @@ export async function processComponent(
 
     saveTranslations(translated, targetLanguage, config);
   }
+}
+
+export async function rewriteComponent(
+  component: ComponentStrings,
+  config: Configuration
+): Promise<boolean> {
+  const { rewriteSourceFiles, lintAfterRewrite } = config;
 
   const source = fs.readFileSync(component.file, 'utf8');
   const updated = updateSource(source, component);
 
   if (rewriteSourceFiles) {
-    fs.writeFileSync(component.file, formatWithPrettier(updated));
+    try {
+      fs.writeFileSync(component.file, formatWithPrettier(updated))
+    } catch(e) {
+      console.error('Error writing file');
+      console.error(e);
+      return false
+    }
   }
 
   if (lintAfterRewrite) {
@@ -56,8 +69,19 @@ export async function processComponent(
     } catch(e) {
       console.error('Error running eslint --fix');
       console.error(e);
+      return false;
     }
   }
+
+  return true;
+}
+
+export async function processComponent(
+  component: ComponentStrings,
+  config: Configuration
+) {
+  await translateComponent(component, config);
+  await rewriteComponent(component, config);
 }
 
 function formatWithPrettier(code: string): string {

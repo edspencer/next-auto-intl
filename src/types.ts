@@ -18,6 +18,13 @@ export type Configuration = {
    * Run eslint --fix on the source files after updating them with translations.
    */
   lintAfterRewrite: boolean;
+
+  /**
+   * Optional number of parallel translations to run using whichever LLM service
+   * is configured.
+   * Default is 5.
+   */
+  parallelTranslations?: number;
 };
 
 export type TranslationItem = {
@@ -25,7 +32,7 @@ export type TranslationItem = {
   original: string;
   identifier: string;
   translation: string;
-  originalLanguage?: string;
+  baseLanguage?: string;
   targetLanguage?: string;
 };
 
