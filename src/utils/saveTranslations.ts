@@ -12,15 +12,17 @@ export function saveTranslations(
   let existingMessages = {};
 
   const localeFile = path.join(config.messagesDir!, `${locale}.json`);
-  console.log('loading: ', localeFile);
+  console.log('loading existing translations from', localeFile);
   try {
-    existingMessages = require(localeFile);
+    existingMessages = JSON.parse(fs.readFileSync(localeFile, 'utf8'));
   } catch (e) {
     console.log(`No existing messages found for locale ${locale}`);
   }
 
   //merge the new messages with the existing ones
   const newMessages = { ...existingMessages, ...messages };
+
+  console.log('saving translations to', localeFile);
 
   //save the new messages
   fs.writeFileSync(localeFile, JSON.stringify(newMessages, null, 2));

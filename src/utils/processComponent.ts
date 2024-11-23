@@ -13,7 +13,7 @@ export async function processComponent(
   config: Configuration
 ) {
   const { componentName } = component;
-  const { baseLanguage, targetLanguages = [], rewriteSourceFiles } = config;
+  const { baseLanguage, targetLanguages = [], rewriteSourceFiles, lintAfterRewrite } = config;
 
   //create the translations
   const translationItems: TranslationItem[] = component.strings.map(
@@ -46,10 +46,15 @@ export async function processComponent(
   const updated = updateSource(source, component);
 
   if (rewriteSourceFiles) {
-    fs.writeFileSync(component.file, updated);
+    fs.writeFileSync(component.file, formatWithPrettier(updated));
   }
 
-  console.log(formatWithPrettier(updated));
+  if (lintAfterRewrite) {
+    console.log('Linting with eslint --fix:', component.file);
+    execSync(`npx eslint --fix ${component.file}`);
+  }
+
+  // console.log(formatWithPrettier(updated));
 }
 
 function formatWithPrettier(code: string): string {
