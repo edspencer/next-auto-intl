@@ -3,4 +3,4 @@ export * from './utils/convertToComponentStrings';
 export * from './utils/updateSource';
 
 export * from './types';
-export * from './script/process';
+export * from './utils/process';

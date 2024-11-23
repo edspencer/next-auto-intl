@@ -2,14 +2,14 @@ import path from 'path';
 
 import { Configuration } from '../types';
 
-import { duplicateNameDetector } from '../utils/duplicateNameDetector';
-import { processComponent } from '../utils/processComponent';
-import { convertToComponentStrings } from '../utils/convertToComponentStrings';
-import { findAllStrings } from '../utils/findAllStrings';
+import { duplicateNameDetector } from './duplicateNameDetector';
+import { processComponent } from './processComponent';
+import { convertToComponentStrings } from './convertToComponentStrings';
+import { findAllStrings } from './findAllStrings';
 import {
   createMessagesObject,
   saveTranslations,
-} from '../utils/saveTranslations';
+} from './saveTranslations';
 
 const config: Configuration = {
   scanDirs: ['../helpmefind/app', '../helpmefind/components'],
