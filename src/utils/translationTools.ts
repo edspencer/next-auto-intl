@@ -11,6 +11,7 @@ import {
   MessagesObject,
   StringInfo,
   Configuration,
+  ComponentStringsMap,
 } from '../types';
 
 export async function translateStrings(
@@ -78,6 +79,42 @@ function generateTranslationPrompt(
   For each translation you will be given the original text, a unique identifier for the string, and the componentName of the
   React component that has the string rendered inside of it. Please return a JSON array of objects, 
   with each object containing "identifier", "original" and "translation" fields:\n\n${examples}`;
+}
+
+export function loadBaseTranslations(config: Configuration): MessagesObject {
+  const { messagesDir = './i18n/messages', baseLanguage } = config;
+  const messagesFile = path.resolve(messagesDir, `${baseLanguage}.json`);
+
+  console.log(`Loading messages for from ${messagesFile}`);
+
+  try {
+    const messages = fs.readFileSync(messagesFile, 'utf8');
+    return JSON.parse(messages) || {};
+  } catch (e) {
+    console.error('Error loading messages');
+    console.error(e);
+    return {};
+  }
+}
+
+export function loadTranslations(
+  componentName: string,
+  targetLanguage: string,
+  config: Configuration
+): ComponentStringsMap {
+  const messagesDir = config.messagesDir || './i18n/messages';
+  const messagesFile = path.resolve(messagesDir, `${targetLanguage}.json`);
+
+  console.log(`Loading messages for ${componentName} from ${messagesFile}`);
+
+  try {
+    const messages = fs.readFileSync(messagesFile, 'utf8');
+    return JSON.parse(messages)[componentName] || {};
+  } catch (e) {
+    console.error('Error loading messages');
+    console.error(e);
+    return {};
+  }
 }
 
 export function saveTranslations(

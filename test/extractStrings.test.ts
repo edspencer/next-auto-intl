@@ -85,10 +85,14 @@ describe('extractStrings', () => {
   it('should extract the proper strings for Pricing', () => {
     expect(pricingStrings).toEqual(expectedPricingStrings);
   });
+
+  it.todo(
+    'should extract strings for a component that has already been partly internationalized'
+  );
 });
 
 function getStrings(fileName: string) {
   const file = path.join(__dirname, 'fixtures', fileName);
   const ast = parseFile(file);
-  return extractStrings(ast, file);
+  return extractStrings(ast, file, {});
 }

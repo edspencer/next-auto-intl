@@ -1,9 +1,13 @@
 import traverse from '@babel/traverse';
 import * as t from '@babel/types';
-import { StringInfo } from './types';
+import { StringInfo, MessagesObject } from './types';
 import slugify from 'slugify';
 
-export function extractStrings(ast: t.File, filePath: string): StringInfo[] {
+export function extractStrings(
+  ast: t.File,
+  filePath: string,
+  baseLanguageStrings: MessagesObject
+): StringInfo[] {
   const strings: StringInfo[] = [];
   const componentScopes: Map<
     string,
@@ -84,6 +88,32 @@ export function extractStrings(ast: t.File, filePath: string): StringInfo[] {
             strings.push(
               createStringInfo(filePath, componentName, value.expression.value)
             );
+          }
+        },
+        JSXExpressionContainer(exprPath) {
+          const expression = exprPath.node.expression;
+
+          // Check for {t('someStringId')}
+          if (
+            t.isCallExpression(expression) &&
+            t.isIdentifier(expression.callee) &&
+            expression.callee.name === 't' &&
+            expression.arguments.length === 1 &&
+            t.isStringLiteral(expression.arguments[0])
+          ) {
+            const identifier = expression.arguments[0].value;
+            const existingComponentTranslations =
+              baseLanguageStrings[componentName] || {};
+            const originalText = existingComponentTranslations[identifier];
+
+            if (originalText) {
+              strings.push({
+                file: filePath,
+                componentName,
+                string: originalText,
+                identifier,
+              });
+            }
           }
         },
       });

@@ -3,15 +3,13 @@ import fs from 'fs';
 import path from 'path';
 
 import { updateSource } from './updateSource';
-import { translateStrings, saveTranslations } from './translationTools';
-
 import {
-  ComponentStrings,
-  TranslationItem,
-  Configuration,
-  MessagesObject,
-  ComponentStringsMap,
-} from '../types';
+  translateStrings,
+  saveTranslations,
+  loadTranslations,
+} from './translationTools';
+
+import { ComponentStrings, TranslationItem, Configuration } from '../types';
 
 export async function translateComponent(
   component: ComponentStrings,
@@ -51,26 +49,6 @@ export async function translateComponent(
     console.log(translated);
 
     saveTranslations(translated, targetLanguage, config);
-  }
-}
-
-export function loadTranslations(
-  componentName: string,
-  targetLanguage: string,
-  config: Configuration
-): ComponentStringsMap {
-  const messagesDir = config.messagesDir || './i18n/messages';
-  const messagesFile = path.resolve(messagesDir, `${targetLanguage}.json`);
-
-  console.log(`Loading messages for ${componentName} from ${messagesFile}`);
-
-  try {
-    const messages = fs.readFileSync(messagesFile, 'utf8');
-    return JSON.parse(messages)[componentName] || {};
-  } catch (e) {
-    console.error('Error loading messages');
-    console.error(e);
-    return {};
   }
 }
 

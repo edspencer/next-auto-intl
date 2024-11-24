@@ -122,6 +122,7 @@ export type Configuration = {
   lintAfterRewrite?: boolean; // Run eslint --fix after updating files
   deleteUnusedTranslations?: boolean; // Delete unused keys from JSON files
   componentWhitelist?: string[]; // Only process specific components
+  parallelTranslations: 5; //max number of parallelization jobs to run in parallel
 };
 ```
 
