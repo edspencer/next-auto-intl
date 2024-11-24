@@ -26,6 +26,8 @@ export async function autoI18n(config: Configuration) {
         duplicates
       );
 
+      console.warn('Stopping process due to duplicate identifiers');
+
       return;
     }
   }

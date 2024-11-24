@@ -97,29 +97,24 @@ export function extractStrings(ast: t.File, filePath: string): StringInfo[] {
 function containsJSX(body: t.BlockStatement | t.Expression | null): boolean {
   if (!body) return false;
 
-  let containsJSX = false;
+  let foundJSX = false;
 
-  // Traverse the block statement or expression to find JSXElement
-  if (t.isBlockStatement(body)) {
-    body.body.forEach((statement) => {
-      if (
-        t.isExpressionStatement(statement) &&
-        t.isJSXElement(statement.expression)
-      ) {
-        containsJSX = true;
-      }
-      if (
-        t.isReturnStatement(statement) &&
-        t.isJSXElement(statement.argument)
-      ) {
-        containsJSX = true;
-      }
-    });
-  } else if (t.isJSXElement(body)) {
-    containsJSX = true;
+  function checkNode(node: t.Node) {
+    if (t.isJSXElement(node) || t.isJSXFragment(node)) {
+      foundJSX = true;
+    }
   }
 
-  return containsJSX;
+  // Traverse block or expression to look for JSX
+  if (t.isBlockStatement(body)) {
+    body.body.forEach((statement) => {
+      t.traverseFast(statement, checkNode);
+    });
+  } else {
+    t.traverseFast(body, checkNode);
+  }
+
+  return foundJSX;
 }
 
 // Determine the nearest React component name for a JSXElement
@@ -135,13 +130,11 @@ function getNearestComponentName(
   while (currentPath) {
     const parentNode = currentPath.parentPath?.node;
 
-    // Match with collected component names
-    if (
-      t.isFunctionDeclaration(parentNode) &&
-      parentNode.id &&
-      componentScopes.has(parentNode.id.name)
-    ) {
-      return parentNode.id.name;
+    // Check if the parentNode is one of the recorded scopes
+    if (t.isFunctionDeclaration(parentNode) && parentNode.id?.name) {
+      if (componentScopes.has(parentNode.id.name)) {
+        return parentNode.id.name;
+      }
     }
 
     if (

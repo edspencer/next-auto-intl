@@ -89,6 +89,47 @@ export function updateSource(
       }
     },
 
+    VariableDeclarator(path) {
+      if (
+        t.isIdentifier(path.node.id) &&
+        path.node.id.name === componentName &&
+        t.isArrowFunctionExpression(path.node.init)
+      ) {
+        const body = path.node.init.body;
+
+        // Ensure the body is a block statement (arrow functions with implicit returns won't work here)
+        if (!t.isBlockStatement(body)) {
+          // Convert the implicit return to a block statement
+          path.node.init.body = t.blockStatement([t.returnStatement(body)]);
+        }
+
+        const blockBody = path.node.init.body as t.BlockStatement;
+
+        const hasUseTranslations = blockBody.body.some(
+          (node) =>
+            t.isVariableDeclaration(node) &&
+            node.declarations.some(
+              (decl) =>
+                t.isVariableDeclarator(decl) &&
+                t.isIdentifier(decl.id) &&
+                decl.id.name === 't'
+            )
+        );
+
+        if (!hasUseTranslations) {
+          const tDeclaration = t.variableDeclaration('const', [
+            t.variableDeclarator(
+              t.identifier('t'),
+              t.callExpression(t.identifier('useTranslations'), [
+                t.stringLiteral(componentName),
+              ])
+            ),
+          ]);
+          blockBody.body.unshift(tDeclaration);
+        }
+      }
+    },
+
     JSXElement(path) {
       // Replace detected strings in children with translations
       path.node.children.forEach((child, index) => {
