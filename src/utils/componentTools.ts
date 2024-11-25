@@ -1,16 +1,28 @@
-import { execSync } from 'child_process';
+import { exec, execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
+import { promisify } from 'util';
 
 import { updateSource } from './updateSource';
 import {
   translateStrings,
   saveTranslations,
   loadTranslations,
+  getMissingKeys,
 } from './translationTools';
 
 import { ComponentStrings, TranslationItem, Configuration } from '../types';
 
+const execAsync = promisify(exec);
+
+/**
+ * Translates all the strings in a component to the target languages.
+ * Saves the translations to the appropriate files.
+ *
+ * @param component - The component to translate.
+ * @param config - The configuration object.
+ * @returns A promise that resolves when the translations are complete.
+ */
 export async function translateComponent(
   component: ComponentStrings,
   config: Configuration
@@ -18,40 +30,67 @@ export async function translateComponent(
   const { componentName } = component;
   const { baseLanguage, targetLanguages = [] } = config;
 
-  //create the translations
+  //base translations for this component
   const baseTranslations = loadTranslations(
     componentName,
     baseLanguage,
     config
   );
 
-  const translationItems: TranslationItem[] = Object.entries(
-    baseTranslations
-  ).map(([identifier, string]) => {
-    return {
-      componentName,
-      original: string,
-      identifier,
-      translation: '',
-      baseLanguage,
-    };
-  });
-
   console.log('Translation items for', componentName);
-  console.log(translationItems);
 
   for (const targetLanguage of targetLanguages) {
-    console.log(
-      `Translating ${translationItems.length} strings to ${targetLanguage}`
+    const existingTranslations = loadTranslations(
+      componentName,
+      targetLanguage,
+      config
     );
-    const translated = await translateStrings(translationItems, targetLanguage);
 
-    console.log(translated);
+    //filter out any existing translations
+    const missingTranslations =
+      getMissingKeys(
+        { [componentName]: baseTranslations },
+        { [componentName]: existingTranslations }
+      )?.[componentName] || {};
 
-    saveTranslations(translated, targetLanguage, config);
+    const translationItems: TranslationItem[] = Object.entries(
+      missingTranslations
+    ).map(([identifier, string]) => {
+      return {
+        componentName,
+        original: string,
+        identifier,
+        translation: '',
+        baseLanguage,
+      };
+    });
+
+    if (translationItems.length === 0) {
+      console.log(`No strings to translate for ${componentName}`);
+    } else {
+      console.log(
+        `Translating ${translationItems.length} strings to ${targetLanguage}`
+      );
+      console.log(translationItems);
+      const translated = await translateStrings(
+        translationItems,
+        targetLanguage
+      );
+
+      console.log(translated);
+
+      saveTranslations(translated, targetLanguage, config);
+    }
   }
 }
 
+/**
+ * Rewrites the component file with the updated translations.
+ *
+ * @param component - The component to rewrite.
+ * @param config - The configuration object.
+ * @returns A promise that resolves to true if the rewrite was successful.
+ */
 export async function rewriteComponent(
   component: ComponentStrings,
   config: Configuration
@@ -74,7 +113,7 @@ export async function rewriteComponent(
   if (lintAfterRewrite) {
     console.log('Linting with eslint --fix:', component.file);
     try {
-      execSync(`npx eslint --fix "${component.file}"`);
+      await execAsync(`npx eslint --fix "${component.file}"`);
     } catch (e) {
       console.error('Error running eslint --fix');
       console.error(e);
@@ -85,6 +124,12 @@ export async function rewriteComponent(
   return true;
 }
 
+/**
+ * Processes a component by translating and rewriting it.
+ *
+ * @param component - The component to process.
+ * @param config - The configuration object.
+ */
 export async function processComponent(
   component: ComponentStrings,
   config: Configuration
@@ -93,6 +138,8 @@ export async function processComponent(
   await rewriteComponent(component, config);
 }
 
+//whether eslint is enabled or not, we can still return something reasonable
+//with prettier, without much cost
 function formatWithPrettier(code: string): string {
   const prettierPath = path.resolve('./node_modules/.bin/prettier');
   return execSync(`${prettierPath} --parser typescript`, {

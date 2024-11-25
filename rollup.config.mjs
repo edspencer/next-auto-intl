@@ -32,6 +32,7 @@ const externalDependencies = [
   'p-limit',
   '@ai-sdk/openai',
   'ai',
+  'deepmerge',
 ];
 
 const watchConfig = {

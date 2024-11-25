@@ -34,6 +34,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Test Build
+        run: pnpm build
+
       - name: Run tests
         env:
           OPENAI_API_KEY: nope
