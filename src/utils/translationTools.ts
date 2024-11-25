@@ -3,7 +3,7 @@ import { generateObject } from 'ai';
 import fs from 'fs';
 import path from 'path';
 import { openai } from '@ai-sdk/openai';
-
+import deepmerge from 'deepmerge';
 import languages from '../data/languages';
 
 import {
@@ -134,7 +134,7 @@ export function saveTranslations(
   }
 
   //merge the new messages with the existing ones
-  const newMessages = { ...existingMessages, ...messages };
+  const newMessages = deepmerge(existingMessages, messages);
 
   console.log('saving translations to', localeFile);
 
