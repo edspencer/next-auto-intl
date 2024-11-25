@@ -5,6 +5,12 @@ import { loadBaseTranslations } from '../utils/translationTools';
 
 import { Configuration, StringInfo } from '../types';
 
+/**
+ * Finds all internationalizable strings in the project.
+ *
+ * @param config - The configuration object.
+ * @returns An array of StringInfo objects representing the internationalizable strings.
+ */
 export function findAllStrings(config: Configuration) {
   const files = getJsxFiles(config.scanDirs);
   let allStrings: StringInfo[] = [];

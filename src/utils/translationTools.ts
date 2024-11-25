@@ -14,6 +14,13 @@ import {
   ComponentStringsMap,
 } from '../types';
 
+/**
+ * Translates an array of strings into the target language.
+ *
+ * @param strings - An array of TranslationItem objects to be translated.
+ * @param targetLanguage - The language code of the target language.
+ * @returns A promise that resolves to a MessagesObject containing the translated strings.
+ */
 export async function translateStrings(
   strings: TranslationItem[],
   targetLanguage: string
@@ -40,6 +47,12 @@ export async function translateStrings(
   return createMessageObjectFromTranslations(object);
 }
 
+/**
+ * Creates a MessagesObject from an array of TranslationItem objects.
+ *
+ * @param translations - An array of TranslationItem objects.
+ * @returns A MessagesObject where each key is a component name and each value is an object of string identifiers and their translations.
+ */
 function createMessageObjectFromTranslations(
   translations: TranslationItem[]
 ): MessagesObject {
@@ -58,6 +71,13 @@ function createMessageObjectFromTranslations(
   return messages;
 }
 
+/**
+ * Generates a prompt for translating strings.
+ *
+ * @param strings - An array of TranslationItem objects to be translated.
+ * @param targetLanguage - The language code of the target language.
+ * @returns A string containing the prompt for translation.
+ */
 function generateTranslationPrompt(
   strings: TranslationItem[],
   targetLanguage: string
@@ -81,6 +101,12 @@ function generateTranslationPrompt(
   with each object containing "identifier", "original" and "translation" fields:\n\n${examples}`;
 }
 
+/**
+ * Loads the base translations from a JSON file.
+ *
+ * @param config - The configuration object containing the messages directory and base language.
+ * @returns A MessagesObject containing the base translations.
+ */
 export function loadBaseTranslations(config: Configuration): MessagesObject {
   const { messagesDir = './i18n/messages', baseLanguage } = config;
   const messagesFile = path.resolve(messagesDir, `${baseLanguage}.json`);
@@ -97,6 +123,14 @@ export function loadBaseTranslations(config: Configuration): MessagesObject {
   }
 }
 
+/**
+ * Loads the translations for a specific component and target language from a JSON file.
+ *
+ * @param componentName - The name of the component.
+ * @param targetLanguage - The language code of the target language.
+ * @param config - The configuration object containing the messages directory.
+ * @returns A ComponentStringsMap containing the translations for the specified component.
+ */
 export function loadTranslations(
   componentName: string,
   targetLanguage: string,
@@ -117,6 +151,13 @@ export function loadTranslations(
   }
 }
 
+/**
+ * Saves the translations to a JSON file.
+ *
+ * @param messages - A MessagesObject containing the translations to be saved.
+ * @param locale - The locale code for the translations.
+ * @param config - The configuration object containing the messages directory.
+ */
 export function saveTranslations(
   messages: MessagesObject,
   locale: string,
@@ -142,6 +183,12 @@ export function saveTranslations(
   fs.writeFileSync(localeFile, JSON.stringify(newMessages, null, 2));
 }
 
+/**
+ * Creates a MessagesObject from an array of StringInfo objects.
+ *
+ * @param strings - An array of StringInfo objects.
+ * @returns A MessagesObject where each key is a component name and each value is an object of string identifiers and their strings.
+ */
 export function createMessagesObject(strings: StringInfo[]): MessagesObject {
   const messages: {
     [componentName: string]: { [identifier: string]: string };
@@ -155,4 +202,48 @@ export function createMessagesObject(strings: StringInfo[]): MessagesObject {
   });
 
   return messages;
+}
+
+/**
+ * Gets the missing keys between the base language and the target language.
+ *
+ * @param baseLanguage - A MessagesObject containing the base language strings.
+ * @param targetLanguage - A MessagesObject containing the target language strings.
+ * @returns A MessagesObject containing the missing keys in the target language.
+ */
+export function getMissingKeys(
+  baseLanguage: MessagesObject,
+  targetLanguage: MessagesObject
+): MessagesObject {
+  const missingKeys: MessagesObject = {};
+
+  for (const componentName in baseLanguage) {
+    if (Object.prototype.hasOwnProperty.call(baseLanguage, componentName)) {
+      const baseComponentStrings = baseLanguage[componentName];
+      const targetComponentStrings = targetLanguage[componentName] || {};
+
+      const componentMissingKeys: ComponentStringsMap = {};
+
+      for (const identifier in baseComponentStrings) {
+        if (
+          Object.prototype.hasOwnProperty.call(
+            baseComponentStrings,
+            identifier
+          ) &&
+          !Object.prototype.hasOwnProperty.call(
+            targetComponentStrings,
+            identifier
+          )
+        ) {
+          componentMissingKeys[identifier] = baseComponentStrings[identifier];
+        }
+      }
+
+      if (Object.keys(componentMissingKeys).length > 0) {
+        missingKeys[componentName] = componentMissingKeys;
+      }
+    }
+  }
+
+  return missingKeys;
 }
