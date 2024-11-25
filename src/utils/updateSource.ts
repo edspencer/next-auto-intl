@@ -1,7 +1,13 @@
 import { parse } from '@babel/parser';
-import generate from '@babel/generator';
-import traverse from '@babel/traverse';
+import * as babelGenerate from '@babel/generator';
+import * as babelTraverse from '@babel/traverse';
 import * as t from '@babel/types';
+
+let traverse = babelTraverse.default || babelTraverse;
+traverse = (traverse as any).default || traverse;
+
+let generate = babelGenerate.default || babelGenerate;
+generate = (generate as any).default || generate;
 
 import { ComponentStrings } from '../types';
 
@@ -41,7 +47,7 @@ export function updateSource(
           node.specifiers.some(
             (spec) =>
               t.isImportSpecifier(spec) &&
-              t.isIdentifier(spec.imported) && // Ensure `spec.imported` is an Identifier
+              t.isIdentifier(spec.imported) &&
               spec.imported.name === 'useTranslations'
           )
       );
@@ -89,8 +95,49 @@ export function updateSource(
       }
     },
 
+    VariableDeclarator(path) {
+      if (
+        t.isIdentifier(path.node.id) &&
+        path.node.id.name === componentName &&
+        t.isArrowFunctionExpression(path.node.init)
+      ) {
+        const body = path.node.init.body;
+
+        // Ensure the body is a block statement (arrow functions with implicit returns won't work here)
+        if (!t.isBlockStatement(body)) {
+          // Convert the implicit return to a block statement
+          path.node.init.body = t.blockStatement([t.returnStatement(body)]);
+        }
+
+        const blockBody = path.node.init.body as t.BlockStatement;
+
+        const hasUseTranslations = blockBody.body.some(
+          (node) =>
+            t.isVariableDeclaration(node) &&
+            node.declarations.some(
+              (decl) =>
+                t.isVariableDeclarator(decl) &&
+                t.isIdentifier(decl.id) &&
+                decl.id.name === 't'
+            )
+        );
+
+        if (!hasUseTranslations) {
+          const tDeclaration = t.variableDeclaration('const', [
+            t.variableDeclarator(
+              t.identifier('t'),
+              t.callExpression(t.identifier('useTranslations'), [
+                t.stringLiteral(componentName),
+              ])
+            ),
+          ]);
+          blockBody.body.unshift(tDeclaration);
+        }
+      }
+    },
+
     JSXElement(path) {
-      // Replace detected strings with translations
+      // Replace detected strings in children with translations
       path.node.children.forEach((child, index) => {
         if (t.isJSXText(child)) {
           const textValue = child.value.trim();
@@ -101,6 +148,29 @@ export function updateSource(
 
           if (textValue && componentString) {
             path.node.children[index] = t.jsxExpressionContainer(
+              t.callExpression(t.identifier('t'), [
+                t.stringLiteral(componentString.identifier),
+              ])
+            );
+          }
+        }
+      });
+
+      // Replace detected strings in attributes with translations
+      path.node.openingElement.attributes.forEach((attr) => {
+        if (
+          t.isJSXAttribute(attr) &&
+          t.isJSXIdentifier(attr.name) &&
+          t.isStringLiteral(attr.value)
+        ) {
+          const attrValue = attr.value.value;
+
+          const componentString = strings.find(
+            ({ string }) => string === attrValue
+          );
+
+          if (componentString) {
+            attr.value = t.jsxExpressionContainer(
               t.callExpression(t.identifier('t'), [
                 t.stringLiteral(componentString.identifier),
               ])
