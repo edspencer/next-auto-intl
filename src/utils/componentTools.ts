@@ -1,6 +1,7 @@
-import { execSync } from 'child_process';
+import { exec, execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
+import { promisify } from 'util';
 
 import { updateSource } from './updateSource';
 import {
@@ -11,6 +12,8 @@ import {
 } from './translationTools';
 
 import { ComponentStrings, TranslationItem, Configuration } from '../types';
+
+const execAsync = promisify(exec);
 
 /**
  * Translates all the strings in a component to the target languages.
@@ -110,7 +113,7 @@ export async function rewriteComponent(
   if (lintAfterRewrite) {
     console.log('Linting with eslint --fix:', component.file);
     try {
-      execSync(`npx eslint --fix "${component.file}"`);
+      await execAsync(`npx eslint --fix "${component.file}"`);
     } catch (e) {
       console.error('Error running eslint --fix');
       console.error(e);

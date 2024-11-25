@@ -60,7 +60,7 @@ export async function doRewrite(config: Configuration) {
   const allStrings = findAllStrings(config);
   const componentStrings = await convertToComponentStrings(allStrings);
 
-  const { allowDuplicateComponentNames } = config;
+  const { allowDuplicateComponentNames, parallelRewrites = 5 } = config;
 
   const duplicates = duplicateNameDetector(allStrings);
 
@@ -77,10 +77,15 @@ export async function doRewrite(config: Configuration) {
     }
   }
 
-  console.log('Rewriting components');
-  for (const component of componentStrings) {
-    await rewriteComponent(component, config);
-  }
+  console.log('Rewriting components', parallelRewrites);
+
+  const limit = pLimit(parallelRewrites);
+
+  await Promise.all(
+    componentStrings.map((component) =>
+      limit(() => rewriteComponent(component, config))
+    )
+  );
 }
 
 /**

@@ -64,6 +64,12 @@ export type Configuration = {
    * Defaults to 5 if not specified.
    */
   parallelTranslations?: number;
+
+  /**
+   * Optional number of parallel file rewrites to run
+   * Defaults to 5 if not specified.
+   */
+  parallelRewrites?: number;
 };
 
 /**
