@@ -4,3 +4,6 @@ export * from './utils/updateSource';
 
 export * from './types';
 export * from './utils/process';
+
+export * from './utils/componentTools';
+export * from './utils/translationTools';

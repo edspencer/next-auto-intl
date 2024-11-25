@@ -1,7 +1,13 @@
 import { parse } from '@babel/parser';
-import generate from '@babel/generator';
-import traverse from '@babel/traverse';
+import * as babelGenerate from '@babel/generator';
+import * as babelTraverse from '@babel/traverse';
 import * as t from '@babel/types';
+
+let traverse = babelTraverse.default || babelTraverse;
+traverse = (traverse as any).default || traverse;
+
+let generate = babelGenerate.default || babelGenerate;
+generate = (generate as any).default || generate;
 
 import { ComponentStrings } from '../types';
 

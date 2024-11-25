@@ -4,7 +4,7 @@
   "description": "Uses AI to automatically internationalize your Next.js app",
   "main": "dist/index.js",
   "bin": {
-    "next-auto-intl": "bin/cli.js"
+    "next-auto-intl": "dist/bin/cli.mjs"
   },
   "scripts": {
     "test": "pnpm jest",
@@ -19,8 +19,9 @@
     "url": "git+https://github.com/edspencer/next-auto-intl.git"
   },
   "files": [
-    "dist",
-    "bin"
+    "dist/",
+    "bin/",
+    "src/"
   ],
   "keywords": [
     "react",
@@ -30,6 +31,7 @@
     "translate",
     "i18n"
   ],
+  "type": "module",
   "author": "Ed Spencer",
   "license": "MIT",
   "dependencies": {
@@ -64,6 +66,7 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.0",
     "@changesets/cli": "^2.27.10",
+    "@rollup/plugin-node-resolve": "^15.3.0",
     "@types/glob": "^8.1.0",
     "@types/node": "^22.9.1",
     "concurrently": "^9.1.0"

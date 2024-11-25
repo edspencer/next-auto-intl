@@ -1,7 +1,10 @@
-import traverse from '@babel/traverse';
+import * as babelTraverse from '@babel/traverse';
 import * as t from '@babel/types';
 import { StringInfo, MessagesObject } from './types';
 import slugify from 'slugify';
+
+let traverse = babelTraverse.default || babelTraverse;
+traverse = (traverse as any).default || traverse;
 
 export function extractStrings(
   ast: t.File,

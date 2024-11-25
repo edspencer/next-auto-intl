@@ -1,12 +1,10 @@
-import path from 'path';
+// import path from 'path';
 
-import { Configuration, autoI18n } from 'next-auto-intl';
-
-const config: Configuration = {
+const config = {
   scanDirs: ['./app', './components'],
   baseLanguage: 'en',
   targetLanguages: ['pt', 'fr'],
-  messagesDir: path.resolve('./i18n/messages'),
+  // messagesDir: path.resolve('./i18n/messages'),
   allowDuplicateComponentNames: true,
 
   componentWhitelist: ['EmptyChat'],
@@ -15,16 +13,4 @@ const config: Configuration = {
   lintAfterRewrite: true,
 };
 
-async function run() {
-  await autoI18n(config);
-}
-
-run()
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  })
-  .finally(() => {
-    console.log('done');
-    process.exit(0);
-  });
+export default config;

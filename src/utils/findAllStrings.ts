@@ -3,7 +3,7 @@ import { parseFile } from '../utils/parser';
 import { extractStrings } from '../extractStrings';
 import { loadBaseTranslations } from '../utils/translationTools';
 
-import { Configuration, StringInfo, MessagesObject } from '../types';
+import { Configuration, StringInfo } from '../types';
 
 export function findAllStrings(config: Configuration) {
   const files = getJsxFiles(config.scanDirs);
