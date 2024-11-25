@@ -1,6 +1,7 @@
 import { getJsxFiles } from '../utils/fileScanner';
 import { parseFile } from '../utils/parser';
 import { extractStrings } from '../extractStrings';
+import { loadBaseTranslations } from '../utils/translationTools';
 
 import { Configuration, StringInfo } from '../types';
 
@@ -12,9 +13,11 @@ export function findAllStrings(config: Configuration) {
 
   console.log(files);
 
+  const baseTranslations = loadBaseTranslations(config);
+
   for (const file of files) {
     const ast = parseFile(file);
-    const strings = extractStrings(ast, file);
+    const strings = extractStrings(ast, file, baseTranslations);
     allStrings = allStrings.concat(strings);
   }
 
