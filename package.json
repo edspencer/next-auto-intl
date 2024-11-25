@@ -4,7 +4,8 @@
   "description": "Uses AI to automatically internationalize your Next.js app",
   "main": "dist/index.js",
   "bin": {
-    "next-auto-intl": "dist/bin/cli.mjs"
+    "next-auto-intl": "dist/bin/cli.mjs",
+    "nai": "dist/bin/cli.mjs"
   },
   "scripts": {
     "test": "pnpm jest",
@@ -69,6 +70,7 @@
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@types/glob": "^8.1.0",
     "@types/node": "^22.9.1",
-    "concurrently": "^9.1.0"
+    "concurrently": "^9.1.0",
+    "rollup-plugin-copy": "^3.5.0"
   }
 }

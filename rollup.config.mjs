@@ -1,4 +1,5 @@
 import typescript from 'rollup-plugin-typescript2';
+import copy from 'rollup-plugin-copy';
 import commonjs from '@rollup/plugin-commonjs';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import resolve from '@rollup/plugin-node-resolve';
@@ -69,7 +70,19 @@ export default [
       sourcemap: true,
       entryFileNames: '[name].mjs', // Ensure CLI filename matches conventions
     },
-    plugins,
+    plugins: [
+      peerDepsExternal(),
+      resolve(),
+      commonjs(),
+      typescript({
+        tsconfig: './tsconfig.json',
+        useTsconfigDeclarationDir: true,
+        exclude: ['test/**/*', 'src/script/**/*'],
+      }),
+      copy({
+        targets: [{ src: 'bin/auto-intl.config.mjs', dest: 'dist/bin' }],
+      }),
+    ],
     external: externalDependencies,
     watch: watchConfig,
   },

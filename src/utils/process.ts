@@ -9,8 +9,8 @@ import { createMessagesObject, saveTranslations } from './translationTools';
 
 export async function doAll(config: Configuration) {
   await doExtract(config);
-  await doRewrite(config);
-  await doTranslate(config);
+
+  await Promise.all([doRewrite(config), doTranslate(config)]);
 }
 
 export async function doExtract(

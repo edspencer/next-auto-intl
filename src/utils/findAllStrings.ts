@@ -11,7 +11,7 @@ export function findAllStrings(config: Configuration) {
 
   console.log(`Detected ${files.length} files`);
 
-  console.log(files);
+  // console.log(files);
 
   const baseTranslations = loadBaseTranslations(config);
 

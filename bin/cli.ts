@@ -2,7 +2,11 @@
 
 import { program } from 'commander';
 import fs from 'fs';
-import path from 'path';
+import path, { dirname } from 'path';
+
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 import { doExtract, doTranslate, doRewrite, doAll } from '../src/utils/process';
 
@@ -29,13 +33,16 @@ program
     );
 
     // const answers = await inquirer.prompt(questions);
-    const configFilePath = path.resolve(process.cwd(), 'next-auto-intl.ts');
+    const appConfigFilePath = path.resolve(
+      process.cwd(),
+      'i18n/auto-intl.config.mjs'
+    );
 
     fs.writeFileSync(
-      configFilePath,
-      fs.readFileSync(path.resolve(__dirname, './next-auto-intl.ts'))
+      appConfigFilePath,
+      fs.readFileSync(path.resolve(__dirname, './auto-intl.config.mjs'))
     );
-    console.log(`Config file created at ${configFilePath}`);
+    console.log(`Config file created at ${appConfigFilePath}`);
   });
 
 program
