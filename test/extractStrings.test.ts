@@ -83,13 +83,13 @@ const expectedRegisterPageStrings = [
 
 const expectedItemsStrings = [
   {
-    file: '/Users/ed/Code/next-auto-intl/test/fixtures/Items.tsx',
+    file: path.resolve(__dirname, 'fixtures', 'Items.tsx'),
     componentName: 'Items',
     string: 'Loading...',
     identifier: 'loading',
   },
   {
-    file: '/Users/ed/Code/next-auto-intl/test/fixtures/Items.tsx',
+    file: path.resolve(__dirname, 'fixtures', 'Items.tsx'),
     componentName: 'Items',
     string: 'Items',
     identifier: 'items',
