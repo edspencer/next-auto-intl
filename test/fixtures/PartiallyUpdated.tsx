@@ -1,5 +1,10 @@
 'use client';
 
+/**
+ * This component has been next-intl'd before, but new strings have been added,
+ * so we can test that we handle those properly.
+ */
+
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -48,14 +53,14 @@ export default function RegisterPage() {
         <AuthForm action={handleSubmit} defaultEmail={email}>
           <SubmitButton>{t('sign-up')}</SubmitButton>
           <p className="text-center text-sm text-gray-600 mt-4 dark:text-zinc-400">
-            {t('already-have-an-account')}
+            {'Already have an account? '}
             <Link
               href="/login"
               className="font-semibold text-gray-800 hover:underline dark:text-zinc-200"
             >
               {t('sign-in')}
             </Link>
-            {t('instead')}
+            {' instead.'}
           </p>
         </AuthForm>
       </div>

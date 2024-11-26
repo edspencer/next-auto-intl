@@ -5,7 +5,7 @@ import { execSync } from 'child_process';
 import { updateSource } from '../src/utils/updateSource';
 import { ComponentStrings } from '../src/types';
 
-const componentStrings: ComponentStrings = {
+const registerComponentStrings: ComponentStrings = {
   componentName: 'RegisterPage',
   file: '',
   strings: [
@@ -30,8 +30,39 @@ const componentStrings: ComponentStrings = {
     {
       file: path.resolve(__dirname, 'fixtures', 'RegisterPage.tsx'),
       componentName: 'RegisterPage',
+      string: 'Already have an account?',
+      identifier: 'already-have-an-account',
+    },
+    {
+      file: path.resolve(__dirname, 'fixtures', 'RegisterPage.tsx'),
+      componentName: 'RegisterPage',
       string: 'Sign in',
       identifier: 'sign-in',
+    },
+    {
+      file: path.resolve(__dirname, 'fixtures', 'RegisterPage.tsx'),
+      componentName: 'RegisterPage',
+      string: 'instead.',
+      identifier: 'instead',
+    },
+  ],
+};
+
+const itemsComponentStrings: ComponentStrings = {
+  componentName: 'Items',
+  file: '',
+  strings: [
+    {
+      file: '/Users/ed/Code/next-auto-intl/test/fixtures/Items.tsx',
+      componentName: 'Items',
+      string: 'Loading...',
+      identifier: 'loading',
+    },
+    {
+      file: '/Users/ed/Code/next-auto-intl/test/fixtures/Items.tsx',
+      componentName: 'Items',
+      string: 'Items',
+      identifier: 'items',
     },
   ],
 };
@@ -46,10 +77,10 @@ describe('updateSourceFile', () => {
 
     const expectedOutput = formattedSourceFile(expectedOutputFile);
 
-    const transformedCode = transformRegisterPage();
+    const transformedCode = transformPage();
 
     // Compare the formatted outputs
-    expect(transformedCode).toBe(expectedOutput);
+    expect(transformedCode).toEqual(expectedOutput);
   });
 
   it('should be idempotent', () => {
@@ -61,25 +92,58 @@ describe('updateSourceFile', () => {
 
     const expectedOutput = formattedSourceFile(expectedOutputFile);
 
-    const transformedCode = transformRegisterPage();
+    const transformedCode = transformPage();
 
     //transform it again, should not change
     const transformedCode2 = formatWithPrettier(
-      updateSource(transformedCode, componentStrings)
+      updateSource(transformedCode, registerComponentStrings)
     );
 
     // Compare the formatted outputs
-    expect(transformedCode2).toBe(expectedOutput);
+    expect(transformedCode2).toEqual(expectedOutput);
+  });
+
+  it('should transform partially-updated files correctly', () => {
+    const expectedOutputFile = path.resolve(
+      __dirname,
+      'fixtures',
+      'PartiallyUpdated.Transformed.tsx'
+    );
+
+    const expectedOutput = formattedSourceFile(expectedOutputFile);
+
+    const transformedCode = transformPage('PartiallyUpdated.tsx');
+
+    // Compare the formatted outputs
+    expect(transformedCode).toEqual(expectedOutput);
+  });
+
+  it('should handle files with weird punctuation correctly', () => {
+    const expectedOutputFile = path.resolve(
+      __dirname,
+      'fixtures',
+      'Items.Transformed.tsx'
+    );
+
+    const expectedOutput = formattedSourceFile(expectedOutputFile);
+
+    const transformedCode = transformPage('Items.tsx', itemsComponentStrings);
+
+    // Compare the formatted outputs
+    expect(transformedCode).toEqual(expectedOutput);
   });
 });
 
-function transformRegisterPage() {
-  const inputFile = path.resolve(__dirname, 'fixtures', 'RegisterPage.tsx');
+function transformPage(
+  fileName: string = 'RegisterPage.tsx',
+  componentStrings = registerComponentStrings
+): string {
+  const inputFile = path.resolve(__dirname, 'fixtures', fileName);
 
   const inputCode = fs.readFileSync(inputFile, 'utf-8');
 
   // Run the transformation
-  const transformedCode = updateSource(inputCode, componentStrings);
+  const transformedCode = updateSource(inputCode, registerComponentStrings);
 
   return formatWithPrettier(transformedCode);
 }

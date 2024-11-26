@@ -22,31 +22,34 @@ export async function doAll(config: Configuration) {
  * Extracts all internationalizable strings and saves the base language messages.
  *
  * @param config - The configuration object.
+ * @param saveMessages - Whether to save the base language messages.
  * @returns A promise that resolves to an array of ComponentStrings.
  */
 export async function doExtract(
-  config: Configuration
+  config: Configuration,
+  saveMessages = true
 ): Promise<ComponentStrings[]> {
-  const allStrings = findAllStrings(config);
   const { baseLanguage } = config;
 
-  console.log(`Found ${allStrings.length} internationalizable strings`);
-
+  const allStrings = findAllStrings(config);
   const componentStrings = await convertToComponentStrings(allStrings);
 
+  console.log(`Found ${allStrings.length} internationalizable strings`);
   console.log(
     `Found ${componentStrings.length} internationalizable components`
   );
 
-  //save the base language messages
-  console.log('Saving base language messages');
-  const messages = createMessagesObject(allStrings);
+  console.log(`String extraction complete, found ${allStrings.length} strings`);
 
-  await saveTranslations(messages, baseLanguage, config);
+  if (saveMessages) {
+    //save the base language messages
+    console.log('Saving base language messages');
+    const messages = createMessagesObject(allStrings);
 
-  console.log(
-    `String extraction complete, found ${allStrings.length} strings, wrote to ${baseLanguage}.json`
-  );
+    await saveTranslations(messages, baseLanguage, config);
+
+    console.log(`wrote to ${baseLanguage}.json`);
+  }
 
   return componentStrings;
 }

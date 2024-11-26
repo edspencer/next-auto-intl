@@ -46,6 +46,18 @@ program
   });
 
 program
+  .command('scan')
+  .description(
+    'Discovers all strings from the codebase and logs them to the console'
+  )
+  .action(async () => {
+    const config = await getConfig();
+
+    console.log('Extracting strings with config:', config);
+    await doExtract(config, false);
+  });
+
+program
   .command('extract')
   .description(
     'Extracts all strings from the codebase and saves them to {baseLanguage}.json'
