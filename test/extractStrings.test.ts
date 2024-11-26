@@ -217,6 +217,254 @@ describe('extractStrings', () => {
 
       expect(expectedStringsForCompFile('ExportClass.tsx')).toEqual(strings);
     });
+
+    it('should extract strings from a React component defined as a class', () => {
+      const strings = getStrings('comp-formats/ForwardRef.tsx', {
+        ComprehensiveTestComponent: {
+          'already-translated-title': 'Already translated title',
+          'welcome-to-myapp': 'Welcome to MyApp',
+        },
+      });
+
+      expect(expectedStringsForCompFile('ForwardRef.tsx')).toEqual(strings);
+    });
+
+    it.failing(
+      'should extract strings from a React component defined as an HOC',
+      () => {
+        const strings = getStrings('comp-formats/HOC.tsx', {
+          ComprehensiveTestComponent: {
+            'already-translated-title': 'Already translated title',
+            'welcome-to-myapp': 'Welcome to MyApp',
+          },
+        });
+
+        expect(expectedStringsForCompFile('HOC.tsx')).toEqual(strings);
+      }
+    );
+
+    it('should extract strings from an implicit return function', () => {
+      const strings = getStrings(
+        'comp-formats/ArrowFunctionImplicitReturn.tsx',
+        {
+          ImplicitReturnComponent: {
+            'hello-world': 'Hello World',
+          },
+        }
+      );
+
+      const expected = [
+        {
+          file: path.resolve(
+            __dirname,
+            'fixtures',
+            'comp-formats',
+            'ArrowFunctionImplicitReturn.tsx'
+          ),
+          componentName: 'ImplicitReturnComponent',
+          string: 'Hello World',
+          identifier: 'hello-world',
+        },
+      ];
+
+      expect(expected).toEqual(strings);
+    });
+
+    it('should extract strings from an stateless FC', () => {
+      const strings = getStrings(
+        'comp-formats/StatelessFunctionalComponent.tsx',
+        {
+          MinimalComponent: {
+            'minimal-component': 'Minimal Component',
+          },
+        }
+      );
+
+      const expected = [
+        {
+          file: path.resolve(
+            __dirname,
+            'fixtures',
+            'comp-formats',
+            'StatelessFunctionalComponent.tsx'
+          ),
+          componentName: 'MinimalComponent',
+          string: 'Minimal Component',
+          identifier: 'minimal-component',
+        },
+      ];
+
+      expect(expected).toEqual(strings);
+    });
+
+    it('should extract strings from fragment wrappers', () => {
+      const strings = getStrings('comp-formats/FragmentWrapper.tsx', {
+        FragmentComponent: {
+          'part-1': 'Part 1',
+          'part-2': 'Part 2',
+        },
+      });
+
+      const expected = [
+        {
+          file: path.resolve(
+            __dirname,
+            'fixtures',
+            'comp-formats',
+            'FragmentWrapper.tsx'
+          ),
+          componentName: 'FragmentComponent',
+          string: 'Part 1',
+          identifier: 'part-1',
+        },
+        {
+          file: path.resolve(
+            __dirname,
+            'fixtures',
+            'comp-formats',
+            'FragmentWrapper.tsx'
+          ),
+          componentName: 'FragmentComponent',
+          string: 'Part 2',
+          identifier: 'part-2',
+        },
+      ];
+
+      expect(expected).toEqual(strings);
+    });
+
+    it('should extract strings from all JSX blocks if the component renders conditionally', () => {
+      const strings = getStrings('comp-formats/ConditionalComponent.tsx', {
+        ConditionalComponent: {
+          'welcome-back': 'Welcome Back',
+          'please-log-in': 'Please Log In',
+        },
+      });
+
+      const expected = [
+        {
+          file: path.resolve(
+            __dirname,
+            'fixtures',
+            'comp-formats',
+            'ConditionalComponent.tsx'
+          ),
+          componentName: 'ConditionalComponent',
+          string: 'Please Log In',
+          identifier: 'please-log-in',
+        },
+        {
+          file: path.resolve(
+            __dirname,
+            'fixtures',
+            'comp-formats',
+            'ConditionalComponent.tsx'
+          ),
+          componentName: 'ConditionalComponent',
+          string: 'Welcome Back',
+          identifier: 'welcome-back',
+        },
+      ];
+
+      expect(expected).toEqual(strings);
+    });
+  });
+
+  it.failing('should extract strings from inline logical expressions', () => {
+    const strings = getStrings('comp-formats/InlineLogic.tsx', {
+      InlineLogic: {
+        'welcome-premium-user': 'Welcome, Premium User!',
+        'upgrade-to-premium': 'Upgrade to Premium',
+        'exclusive-feature': 'Exclusive Feature',
+      },
+    });
+
+    const expected = [
+      {
+        file: path.resolve(
+          __dirname,
+          'fixtures',
+          'comp-formats',
+          'InlineLogic.tsx'
+        ),
+        componentName: 'InlineLogic',
+        string: 'Welcome, Premium User!',
+        identifier: 'welcome-premium-user',
+      },
+      {
+        file: path.resolve(
+          __dirname,
+          'fixtures',
+          'comp-formats',
+          'InlineLogic.tsx'
+        ),
+        componentName: 'InlineLogic',
+        string: 'Upgrade to Premium',
+        identifier: 'upgrade-to-premim',
+      },
+      {
+        file: path.resolve(
+          __dirname,
+          'fixtures',
+          'comp-formats',
+          'InlineLogic.tsx'
+        ),
+        componentName: 'InlineLogic',
+        string: 'Exclusive Feature',
+        identifier: 'exclusive-feature',
+      },
+    ];
+
+    expect(expected).toEqual(strings);
+  });
+
+  it('should extract strings from inline logical expressions', () => {
+    const strings = getStrings('comp-formats/SelfClosing.tsx', {
+      SelfClosingComponent: {
+        logo: 'Logo',
+      },
+    });
+
+    const expected = [
+      {
+        file: path.resolve(
+          __dirname,
+          'fixtures',
+          'comp-formats',
+          'SelfClosing.tsx'
+        ),
+        componentName: 'SelfClosingComponent',
+        string: 'Logo',
+        identifier: 'logo',
+      },
+    ];
+
+    expect(expected).toEqual(strings);
+  });
+
+  it('should ignore strings passed in to child components if they are not user-facing strings', () => {
+    const strings = getStrings('comp-formats/ParentComponent.tsx', {
+      ParentComponent: {
+        'hello-world': 'Hello  World',
+      },
+    });
+
+    //the "Hello from Parent" string should not be extracted
+    const expected = [
+      {
+        file: path.resolve(
+          __dirname,
+          'fixtures',
+          'comp-formats',
+          'ParentComponent.tsx'
+        ),
+        componentName: 'ParentComponent',
+        string: 'Hello World',
+        identifier: 'hello-world',
+      },
+    ];
+
+    expect(expected).toEqual(strings);
   });
 });
 

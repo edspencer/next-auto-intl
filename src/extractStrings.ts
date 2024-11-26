@@ -72,6 +72,33 @@ export function extractStrings(
         }
       }
     },
+
+    // Check for React.forwardRef
+    CallExpression(path) {
+      const { callee, arguments: args } = path.node;
+
+      if (
+        t.isMemberExpression(callee) &&
+        t.isIdentifier(callee.object, { name: 'React' }) &&
+        t.isIdentifier(callee.property, { name: 'forwardRef' }) &&
+        args.length > 0 &&
+        t.isFunctionExpression(args[0])
+      ) {
+        const functionExpression = args[0];
+
+        // Ensure the parent is a VariableDeclarator to access `id`
+        const parent = path.parent;
+        if (
+          t.isVariableDeclarator(parent) &&
+          t.isIdentifier(parent.id) &&
+          /^[A-Z]/.test(parent.id.name)
+        ) {
+          if (containsJSX(functionExpression.body)) {
+            componentScopes.set(parent.id.name, functionExpression);
+          }
+        }
+      }
+    },
   });
 
   const visitedNodes: any[] = [];

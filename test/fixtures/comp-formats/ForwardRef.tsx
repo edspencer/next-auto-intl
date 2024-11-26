@@ -1,19 +1,59 @@
 import React from 'react';
+import { useTranslations } from 'next-intl';
 
-export const SignOutForm = React.forwardRef<HTMLFormElement>((props, ref) => (
-  <Form
-    className="w-full"
-    ref={ref}
-    action={async () => {
-      'use server';
+export const ComprehensiveTestComponent = React.forwardRef(
+  function ComprehensiveTestComponent(props, ref) {
+    const t = useTranslations('ComprehensiveTestComponent');
+    const dynamicValue = 'Dynamic String'; // For non-static test cases
 
-      await signOut({
-        redirectTo: '/',
-      });
-    }}
-  >
-    <button type="submit" className="w-full text-left px-1 py-0.5 text-red-500">
-      Sign out
-    </button>
-  </Form>
-));
+    return (
+      <div>
+        {/* Basic static strings */}
+        <h1>Welcome to the Test!</h1>
+        <p>This is a comprehensive test case.</p>
+
+        {/* Human-facing attributes */}
+        <img
+          src="/test-image.jpg"
+          alt="This is a test image"
+          title="Image title here"
+        />
+        <input
+          placeholder="Enter your name"
+          aria-label="Name input field"
+          aria-labelledby="nameLabel"
+        />
+
+        {/* JSX expressions with strings */}
+        <span>{'This is inside curly braces.'}</span>
+        <span> </span>
+        <span>{`,`}</span>
+        <span>{`Another tricky string with spaces and punctuation!`}</span>
+
+        {/* Dynamic value */}
+        <span>{dynamicValue}</span>
+
+        {/* Random punctuation */}
+        <span>{'('}</span>
+        <span>{')'}</span>
+        <span>{'...'}</span>
+        <span>{'!@#$%^&*()'}</span>
+
+        {/* Nested components and strings */}
+        <div>
+          <p>
+            Nested <strong>string inside a tag</strong> for more coverage.
+          </p>
+        </div>
+
+        {/* Multiple attributes */}
+        <a href="/test-link" title="Test Link Title">
+          Click here
+        </a>
+
+        {/* Already-translated strings */}
+        <p title={t('already-translated-title')}>{t('welcome-to-myapp')} </p>
+      </div>
+    );
+  }
+);

@@ -1,3 +1,4 @@
 [] Check that strings are not urls or email addresses (or phone numbers?) - don't translate if so
 [] NonMemoizedMarkdown is leaking a tailwind config string
 [] Would be nice to have a way to mark strings not to extract/rewrite (e.g. "helpmefind.ai" - not a url but also not translatable)
+[] Support decorator to translate strings inside non-JSX JS objects

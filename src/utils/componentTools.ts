@@ -97,6 +97,12 @@ export async function rewriteComponent(
 ): Promise<boolean> {
   const { lintAfterRewrite } = config;
 
+  //if everything is already translated, we don't need to rewrite
+  if (component.strings.every((s) => s.alreadyUpdated)) {
+    console.log('Component already updated:', component.componentName);
+    return true;
+  }
+
   console.log('Rewriting component:', component.componentName);
 
   const source = fs.readFileSync(component.file, 'utf8');
