@@ -53,8 +53,17 @@ program
   .action(async () => {
     const config = await getConfig();
 
-    console.log('Extracting strings with config:', config);
-    await doExtract(config, false);
+    const componentStrings = await doExtract(config, false);
+
+    for (const { componentName, strings } of componentStrings) {
+      console.log(`${componentName}: ${strings.length} strings`);
+
+      for (const { string, identifier } of strings) {
+        console.log(`  ${identifier}: ${string}`);
+      }
+
+      console.log('\n');
+    }
   });
 
 program
@@ -65,7 +74,6 @@ program
   .action(async () => {
     const config = await getConfig();
 
-    console.log('Extracting strings with config:', config);
     await doExtract(config);
   });
 

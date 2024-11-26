@@ -197,7 +197,17 @@ export type Configuration = {
 
 ---
 
-### 5. Extract Job
+### 5. Other CLI commands
+
+#### scan
+
+To just scan for internationalizable strings in your project without modifying any files, just run this command:
+
+```sh
+npx nai scan
+```
+
+#### extract
 
 To just extract all the detected strings in your JSX components and write them to `i18n/messages/en.json` (assuming your configured `baseLanguage` is set to `en`), just run this command:
 
@@ -207,7 +217,7 @@ npx nai extract
 
 It is safe to run the task any number of times.
 
-### 6. Rewrite Job
+#### rewrite
 
 The `rewrite` phase iterates through all of strings in `i18n/messages/en.json` and updates all of the JSX components
 
@@ -219,16 +229,15 @@ npx nai rewrite
 
 It is safe to run the task any number of times.
 
-### 7. Translating without rewriting
+### translate
 
-If you don't want `next-auto-intl` to rewrite your source files for you, but you do still want it to find all the strings and translate them for you, just run the 2 commands:
+You can just run the `translate` command if you don't want to re-scan/rewrite your JSX files. Useful when adding another language to `targetLanguages`, for example:
 
 ```sh
-npx nai extract
 npx nai translate
 ```
 
-This will create a `{someLanguage}.json` file for each language in the `targetLanguages` config array, as well as the `en.json` original strings (assuming your `baseLanguage` is `en`). You can also set the `rewriteSourceFiles` config to `false` and then run the full `npx nai run` command and it will skip the rewriting step.
+This will create a `{someLanguage}.json` file for each language in the `targetLanguages` config array. If some or all all expected translations for the target language already exist, it will not re-translate them, just the strings it doesn't have a translation for currently.
 
 ## Contributing
 
