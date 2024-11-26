@@ -67,7 +67,9 @@ export function extractStrings(
           if (visitedNodes.includes(textPath.node)) return;
 
           const textValue = textPath.node.value.trim();
-          if (textValue) {
+
+          // Ensure the string contains at least one alphabetic character
+          if (textValue && /[a-zA-Z]/.test(textValue)) {
             strings.push(createStringInfo(filePath, componentName, textValue));
           }
 
@@ -81,29 +83,56 @@ export function extractStrings(
             return;
 
           if (t.isStringLiteral(value)) {
-            strings.push(
-              createStringInfo(filePath, componentName, value.value)
-            );
+            // Ensure the string contains at least one alphabetic character
+            if (/[a-zA-Z]/.test(value.value)) {
+              strings.push(
+                createStringInfo(filePath, componentName, value.value)
+              );
+            }
           } else if (
             t.isJSXExpressionContainer(value) &&
             t.isStringLiteral(value.expression)
           ) {
-            strings.push(
-              createStringInfo(filePath, componentName, value.expression.value)
-            );
+            // Ensure the string contains at least one alphabetic character
+            if (/[a-zA-Z]/.test(value.expression.value)) {
+              strings.push(
+                createStringInfo(
+                  filePath,
+                  componentName,
+                  value.expression.value
+                )
+              );
+            }
           }
         },
         JSXExpressionContainer(exprPath) {
           const expression = exprPath.node.expression;
 
-          // Check for {t('someStringId')}
-          if (
+          // Skip visited nodes
+          if (visitedNodes.includes(exprPath.node)) return;
+
+          if (t.isStringLiteral(expression)) {
+            // Handle string literals like {' instead.'}
+            const textValue = expression.value.trim();
+
+            // Ensure the string contains at least one alphabetic character
+            if (textValue && /[a-zA-Z]/.test(textValue)) {
+              strings.push(
+                createStringInfo(filePath, componentName, textValue)
+              );
+            }
+
+            // Mark the node and its expression as visited
+            visitedNodes.push(exprPath.node);
+            visitedNodes.push(expression);
+          } else if (
             t.isCallExpression(expression) &&
             t.isIdentifier(expression.callee) &&
             expression.callee.name === 't' &&
             expression.arguments.length === 1 &&
             t.isStringLiteral(expression.arguments[0])
           ) {
+            // Handle {t('someStringId')}
             const identifier = expression.arguments[0].value;
             const existingComponentTranslations =
               baseLanguageStrings[componentName] || {};
@@ -116,6 +145,10 @@ export function extractStrings(
                 string: originalText,
                 identifier,
               });
+
+              // Mark the node and its expression as visited
+              visitedNodes.push(exprPath.node);
+              visitedNodes.push(expression);
             }
           }
         },

@@ -64,18 +64,47 @@ const expectedRegisterPageStrings = [
   {
     file: path.resolve(__dirname, 'fixtures', 'RegisterPage.tsx'),
     componentName: 'RegisterPage',
+    string: 'Already have an account?',
+    identifier: 'already-have-an-account',
+  },
+  {
+    file: path.resolve(__dirname, 'fixtures', 'RegisterPage.tsx'),
+    componentName: 'RegisterPage',
     string: 'Sign in',
     identifier: 'sign-in',
+  },
+  {
+    file: path.resolve(__dirname, 'fixtures', 'RegisterPage.tsx'),
+    componentName: 'RegisterPage',
+    string: 'instead.',
+    identifier: 'instead',
+  },
+];
+
+const expectedItemsStrings = [
+  {
+    file: path.resolve(__dirname, 'fixtures', 'Items.tsx'),
+    componentName: 'Items',
+    string: 'Loading...',
+    identifier: 'loading',
+  },
+  {
+    file: path.resolve(__dirname, 'fixtures', 'Items.tsx'),
+    componentName: 'Items',
+    string: 'Items',
+    identifier: 'items',
   },
 ];
 
 describe('extractStrings', () => {
   let pricingStrings: any;
   let registerPageStrings: any;
+  let itemsStrings: any;
 
   beforeAll(() => {
     pricingStrings = getStrings('Pricing.tsx');
     registerPageStrings = getStrings('RegisterPage.tsx');
+    itemsStrings = getStrings('Items.tsx');
   });
 
   it('should extract the proper strings for RegisterPage', () => {
@@ -86,13 +115,69 @@ describe('extractStrings', () => {
     expect(pricingStrings).toEqual(expectedPricingStrings);
   });
 
-  it.todo(
-    'should extract strings for a component that has already been partly internationalized'
-  );
+  //this React component has a '(' and a ')' in it, which should be ignored
+  it('should not create strings for pieces of standalone punctuation', () => {
+    expect(itemsStrings).toEqual(expectedItemsStrings);
+  });
+
+  //this React component is the same Register page, but there are 2 new strings that should be extracted
+  it('should extract strings for a component that has already been partly internationalized', () => {
+    const newStrings = [
+      {
+        file: path.resolve(__dirname, 'fixtures', 'PartiallyUpdated.tsx'),
+        componentName: 'RegisterPage',
+        string: 'Sign Up',
+        identifier: 'sign-up',
+      },
+      {
+        file: path.resolve(__dirname, 'fixtures', 'PartiallyUpdated.tsx'),
+        componentName: 'RegisterPage',
+        string: 'Create an account with your email and password',
+        identifier: 'create-an-account-with-your',
+      },
+      {
+        file: path.resolve(__dirname, 'fixtures', 'PartiallyUpdated.tsx'),
+        componentName: 'RegisterPage',
+        string: 'Sign Up',
+        identifier: 'sign-up',
+      },
+      {
+        file: path.resolve(__dirname, 'fixtures', 'PartiallyUpdated.tsx'),
+        componentName: 'RegisterPage',
+        string: 'Already have an account?',
+        identifier: 'already-have-an-account',
+      },
+      {
+        file: path.resolve(__dirname, 'fixtures', 'PartiallyUpdated.tsx'),
+        componentName: 'RegisterPage',
+        string: 'Sign in',
+        identifier: 'sign-in',
+      },
+      {
+        file: path.resolve(__dirname, 'fixtures', 'PartiallyUpdated.tsx'),
+        componentName: 'RegisterPage',
+        string: 'instead.',
+        identifier: 'instead',
+      },
+    ];
+
+    const strings = getStrings('PartiallyUpdated.tsx', {
+      //these are the strings that were already extracted from the RegisterPage component
+      RegisterPage: {
+        'create-an-account-with-your':
+          'Create an account with your email and password',
+        'sign-in': 'Sign in',
+        'sign-up': 'Sign Up',
+      },
+    });
+
+    expect(strings).toEqual(newStrings);
+  });
 });
 
-function getStrings(fileName: string) {
+function getStrings(fileName: string, baseLanguageStrings?: any) {
   const file = path.join(__dirname, 'fixtures', fileName);
   const ast = parseFile(file);
-  return extractStrings(ast, file, {});
+
+  return extractStrings(ast, file, baseLanguageStrings);
 }

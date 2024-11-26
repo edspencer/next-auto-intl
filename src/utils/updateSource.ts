@@ -179,6 +179,29 @@ export function updateSource(
         }
       });
     },
+
+    JSXExpressionContainer(path) {
+      // Replace strings within JSXExpressionContainer
+      const expression = path.node.expression;
+
+      if (t.isStringLiteral(expression)) {
+        const textValue = expression.value.trim();
+
+        const componentString = strings.find(
+          ({ string }) => string === textValue
+        );
+
+        if (textValue && componentString) {
+          path.replaceWith(
+            t.jsxExpressionContainer(
+              t.callExpression(t.identifier('t'), [
+                t.stringLiteral(componentString.identifier),
+              ])
+            )
+          );
+        }
+      }
+    },
   });
 
   return generate(ast).code;

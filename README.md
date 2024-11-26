@@ -211,6 +211,12 @@ It is safe to run the task any number of times.
 
 The `rewrite` phase iterates through all of strings in `i18n/messages/en.json` and updates all of the JSX components
 
+To just run the `rewrite` phase:
+
+```sh
+npx nai rewrite
+```
+
 It is safe to run the task any number of times.
 
 ### 7. Translating without rewriting
