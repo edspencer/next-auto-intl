@@ -131,6 +131,28 @@ export interface StringInfo {
    * A unique identifier for the string, typically used in translation files.
    */
   identifier: string;
+
+  /**
+   * If true, signifies that the string was something like {t('welcome-to-myapp')}
+   * and therefore has already been updated to use the t() function. This is used to
+   * decide if we need to rewrite the source file.
+   */
+  alreadyUpdated?: boolean;
+
+  /**
+   * Indicates whether this string was found inside JSX text or within a JSX expression.
+   * If true, it was in a JSX expression like {`  some string  `}.
+   */
+  isExpression?: boolean;
+
+  /**
+   * Contains contextual information about leading/trailing spaces.
+   * This is useful for preserving spaces between mixed inline elements.
+   */
+  surroundingSpaces?: {
+    leading: boolean; // Whether there's a leading space before this string
+    trailing: boolean; // Whether there's a trailing space after this string
+  };
 }
 
 /**

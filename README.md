@@ -229,7 +229,7 @@ npx nai rewrite
 
 It is safe to run the task any number of times.
 
-### translate
+#### translate
 
 You can just run the `translate` command if you don't want to re-scan/rewrite your JSX files. Useful when adding another language to `targetLanguages`, for example:
 

@@ -1,6 +1,10 @@
 import { parseFile } from '../src/utils/parser';
 import { extractStrings } from '../src/extractStrings';
 import path from 'path';
+import { StringInfo } from '../src/types';
+
+const sortByIdentifier = (a: StringInfo, b: StringInfo) =>
+  a.identifier < b.identifier ? -1 : 1;
 
 const expectedPricingStrings = [
   {
@@ -40,7 +44,7 @@ const expectedPricingStrings = [
     string: 'Choose plan',
     identifier: 'choose-plan',
   },
-];
+].sort(sortByIdentifier);
 
 const expectedRegisterPageStrings = [
   {
@@ -79,7 +83,7 @@ const expectedRegisterPageStrings = [
     string: 'instead.',
     identifier: 'instead',
   },
-];
+].sort(sortByIdentifier);
 
 const expectedItemsStrings = [
   {
@@ -94,7 +98,7 @@ const expectedItemsStrings = [
     string: 'Items',
     identifier: 'items',
   },
-];
+].sort(sortByIdentifier);
 
 describe('extractStrings', () => {
   let pricingStrings: any;
@@ -128,18 +132,21 @@ describe('extractStrings', () => {
         componentName: 'RegisterPage',
         string: 'Sign Up',
         identifier: 'sign-up',
+        alreadyUpdated: true,
       },
       {
         file: path.resolve(__dirname, 'fixtures', 'PartiallyUpdated.tsx'),
         componentName: 'RegisterPage',
         string: 'Create an account with your email and password',
         identifier: 'create-an-account-with-your',
+        alreadyUpdated: true,
       },
       {
         file: path.resolve(__dirname, 'fixtures', 'PartiallyUpdated.tsx'),
         componentName: 'RegisterPage',
         string: 'Sign Up',
         identifier: 'sign-up',
+        alreadyUpdated: true,
       },
       {
         file: path.resolve(__dirname, 'fixtures', 'PartiallyUpdated.tsx'),
@@ -152,6 +159,7 @@ describe('extractStrings', () => {
         componentName: 'RegisterPage',
         string: 'Sign in',
         identifier: 'sign-in',
+        alreadyUpdated: true,
       },
       {
         file: path.resolve(__dirname, 'fixtures', 'PartiallyUpdated.tsx'),
@@ -159,7 +167,7 @@ describe('extractStrings', () => {
         string: 'instead.',
         identifier: 'instead',
       },
-    ];
+    ].sort(sortByIdentifier);
 
     const strings = getStrings('PartiallyUpdated.tsx', {
       //these are the strings that were already extracted from the RegisterPage component
@@ -173,11 +181,153 @@ describe('extractStrings', () => {
 
     expect(strings).toEqual(newStrings);
   });
+
+  describe('various ways of defining React components', () => {
+    it('should extract strings from a React component defined as a function declaration', () => {
+      const strings = getStrings('comp-formats/FunctionDeclaration.tsx', {
+        ComprehensiveTestComponent: {
+          'already-translated-title': 'Already translated title',
+          'welcome-to-myapp': 'Welcome to MyApp',
+        },
+      });
+
+      expect(expectedStringsForCompFile('FunctionDeclaration.tsx')).toEqual(
+        strings
+      );
+    });
+
+    it('should extract strings from a React component defined as a arrow function', () => {
+      const strings = getStrings('comp-formats/ArrowFunction.tsx', {
+        ComprehensiveTestComponent: {
+          'already-translated-title': 'Already translated title',
+          'welcome-to-myapp': 'Welcome to MyApp',
+        },
+      });
+
+      expect(expectedStringsForCompFile('ArrowFunction.tsx')).toEqual(strings);
+    });
+
+    it('should extract strings from a React component defined as a class', () => {
+      const strings = getStrings('comp-formats/ExportClass.tsx', {
+        ComprehensiveTestComponent: {
+          'already-translated-title': 'Already translated title',
+          'welcome-to-myapp': 'Welcome to MyApp',
+        },
+      });
+
+      expect(expectedStringsForCompFile('ExportClass.tsx')).toEqual(strings);
+    });
+  });
 });
+
+function expectedStringsForCompFile(filename: string) {
+  return expectedStringsCompTest
+    .map((string) => ({
+      ...string,
+      file: path.resolve(__dirname, 'fixtures', 'comp-formats', filename),
+    }))
+    .sort(sortByIdentifier);
+}
+
+const expectedStringsCompTest = [
+  {
+    file: '/path/to/fixtures',
+    componentName: 'ComprehensiveTestComponent',
+    string: 'Welcome to the Test!',
+    identifier: 'welcome-to-the-test',
+  },
+  {
+    file: '/path/to/fixtures',
+    componentName: 'ComprehensiveTestComponent',
+    string: 'This is a comprehensive test case.',
+    identifier: 'this-is-a-comprehensive-test',
+  },
+  {
+    file: '/path/to/fixtures',
+    componentName: 'ComprehensiveTestComponent',
+    string: 'This is a test image',
+    identifier: 'this-is-a-test-image',
+  },
+  {
+    file: '/path/to/fixtures',
+    componentName: 'ComprehensiveTestComponent',
+    string: 'Image title here',
+    identifier: 'image-title-here',
+  },
+  {
+    file: '/path/to/fixtures',
+    componentName: 'ComprehensiveTestComponent',
+    string: 'Enter your name',
+    identifier: 'enter-your-name',
+  },
+  {
+    file: '/path/to/fixtures',
+    componentName: 'ComprehensiveTestComponent',
+    string: 'Name input field',
+    identifier: 'name-input-field',
+  },
+  {
+    file: '/path/to/fixtures',
+    componentName: 'ComprehensiveTestComponent',
+    string: 'This is inside curly braces.',
+    identifier: 'this-is-inside-curly-braces',
+  },
+  {
+    file: '/path/to/fixtures',
+    componentName: 'ComprehensiveTestComponent',
+    string: 'Another tricky string with spaces and punctuation!',
+    identifier: 'another-tricky-string-with-spaces',
+    isExpression: true,
+  },
+  {
+    file: '/path/to/fixtures',
+    componentName: 'ComprehensiveTestComponent',
+    string: 'Nested',
+    identifier: 'nested',
+  },
+  {
+    file: '/path/to/fixtures',
+    componentName: 'ComprehensiveTestComponent',
+    string: 'string inside a tag',
+    identifier: 'string-inside-a-tag',
+  },
+  {
+    file: '/path/to/fixtures',
+    componentName: 'ComprehensiveTestComponent',
+    string: 'for more coverage.',
+    identifier: 'for-more-coverage',
+  },
+  {
+    file: '/path/to/fixtures',
+    componentName: 'ComprehensiveTestComponent',
+    string: 'Test Link Title',
+    identifier: 'test-link-title',
+  },
+  {
+    file: '/path/to/fixtures',
+    componentName: 'ComprehensiveTestComponent',
+    string: 'Click here',
+    identifier: 'click-here',
+  },
+  {
+    file: '/path/to/fixtures',
+    componentName: 'ComprehensiveTestComponent',
+    string: 'Already translated title',
+    identifier: 'already-translated-title',
+    alreadyUpdated: true,
+  },
+  {
+    file: '/path/to/fixtures',
+    componentName: 'ComprehensiveTestComponent',
+    string: 'Welcome to MyApp',
+    identifier: 'welcome-to-myapp',
+    alreadyUpdated: true,
+  },
+];
 
 function getStrings(fileName: string, baseLanguageStrings?: any) {
   const file = path.join(__dirname, 'fixtures', fileName);
   const ast = parseFile(file);
 
-  return extractStrings(ast, file, baseLanguageStrings);
+  return extractStrings(ast, file, baseLanguageStrings).sort(sortByIdentifier);
 }

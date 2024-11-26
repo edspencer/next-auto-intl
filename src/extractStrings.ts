@@ -14,7 +14,10 @@ export function extractStrings(
   const strings: StringInfo[] = [];
   const componentScopes: Map<
     string,
-    t.FunctionDeclaration | t.FunctionExpression | t.ArrowFunctionExpression
+    | t.FunctionDeclaration
+    | t.FunctionExpression
+    | t.ArrowFunctionExpression
+    | t.ClassDeclaration
   > = new Map();
 
   // 1. Collect all React component names in the file
@@ -52,6 +55,23 @@ export function extractStrings(
         }
       }
     },
+    ClassDeclaration(path) {
+      const node = path.node;
+
+      if (node.id && /^[A-Z]/.test(node.id.name)) {
+        // Check if the class contains a `render` method with JSX
+        const renderMethod = node.body.body.find(
+          (bodyNode): bodyNode is t.ClassMethod =>
+            t.isClassMethod(bodyNode) &&
+            t.isIdentifier(bodyNode.key) &&
+            bodyNode.key.name === 'render'
+        );
+
+        if (renderMethod && containsJSX(renderMethod.body)) {
+          componentScopes.set(node.id.name, node);
+        }
+      }
+    },
   });
 
   const visitedNodes: any[] = [];
@@ -66,7 +86,28 @@ export function extractStrings(
           // Skip visited nodes
           if (visitedNodes.includes(textPath.node)) return;
 
-          const textValue = textPath.node.value.trim();
+          const parent = textPath.parent;
+
+          // Ensure the parent is a JSXElement
+          if (!t.isJSXElement(parent)) return;
+
+          // Determine if the text node is the only child of its parent
+          const isOnlyChild =
+            parent.children.filter((child) => t.isJSXText(child)).length === 1;
+
+          // Normalize the text value
+          let textValue = textPath.node.value;
+          if (isOnlyChild) {
+            // If it's the only child, trim all whitespace
+            textValue = textValue.trim();
+          } else {
+            // Otherwise, normalize spaces to preserve single leading/trailing spaces
+            textValue = textValue
+              .replace(/^\s+/, ' ')
+              .replace(/\s+$/, ' ')
+              .trimStart() // Handle excessive leading whitespace
+              .trimEnd(); // Handle excessive trailing whitespace
+          }
 
           // Ensure the string contains at least one alphabetic character
           if (textValue && /[a-zA-Z]/.test(textValue)) {
@@ -76,11 +117,16 @@ export function extractStrings(
           // Mark the node as visited
           visitedNodes.push(textPath.node);
         },
+
         JSXAttribute(attrPath) {
           const { name, value } = attrPath.node;
 
-          if (!t.isJSXIdentifier(name) || !isUserFacingAttribute(name.name))
+          // Skip visited nodes
+          if (visitedNodes.includes(attrPath.node)) return;
+
+          if (!t.isJSXIdentifier(name) || !isUserFacingAttribute(name.name)) {
             return;
+          }
 
           if (t.isStringLiteral(value)) {
             // Ensure the string contains at least one alphabetic character
@@ -89,6 +135,9 @@ export function extractStrings(
                 createStringInfo(filePath, componentName, value.value)
               );
             }
+
+            // Mark the node as visited
+            visitedNodes.push(attrPath.node);
           } else if (
             t.isJSXExpressionContainer(value) &&
             t.isStringLiteral(value.expression)
@@ -103,8 +152,13 @@ export function extractStrings(
                 )
               );
             }
+
+            // Mark the node and its expression as visited
+            visitedNodes.push(attrPath.node);
+            visitedNodes.push(value.expression);
           }
         },
+
         JSXExpressionContainer(exprPath) {
           const expression = exprPath.node.expression;
 
@@ -121,6 +175,28 @@ export function extractStrings(
                 createStringInfo(filePath, componentName, textValue)
               );
             }
+
+            // Mark the node and its expression as visited
+            visitedNodes.push(exprPath.node);
+            visitedNodes.push(expression);
+          } else if (t.isTemplateLiteral(expression)) {
+            // Handle template literals like {`Another tricky string with spaces and punctuation!`}
+            expression.quasis.forEach((quasi) => {
+              const rawText = quasi.value.raw;
+
+              // Normalize spaces and check for alphabetic characters
+              const textValue = rawText
+                .replace(/^\s+/, ' ')
+                .replace(/\s+$/, ' ');
+
+              if (textValue && /[a-zA-Z]/.test(textValue)) {
+                strings.push(
+                  createStringInfo(filePath, componentName, textValue, {
+                    isExpression: true,
+                  })
+                );
+              }
+            });
 
             // Mark the node and its expression as visited
             visitedNodes.push(exprPath.node);
@@ -144,6 +220,7 @@ export function extractStrings(
                 componentName,
                 string: originalText,
                 identifier,
+                alreadyUpdated: true,
               });
 
               // Mark the node and its expression as visited
@@ -188,7 +265,10 @@ function getNearestComponentName(
   path: any,
   componentScopes: Map<
     string,
-    t.FunctionDeclaration | t.FunctionExpression | t.ArrowFunctionExpression
+    | t.FunctionDeclaration
+    | t.FunctionExpression
+    | t.ArrowFunctionExpression
+    | t.ClassDeclaration
   >
 ): string {
   let currentPath = path;
@@ -196,7 +276,7 @@ function getNearestComponentName(
   while (currentPath) {
     const parentNode = currentPath.parentPath?.node;
 
-    // Check if the parentNode is one of the recorded scopes
+    // Check if the parentNode is one of the recorded function scopes
     if (t.isFunctionDeclaration(parentNode) && parentNode.id?.name) {
       if (componentScopes.has(parentNode.id.name)) {
         return parentNode.id.name;
@@ -211,6 +291,13 @@ function getNearestComponentName(
       return parentNode.id.name;
     }
 
+    // Check if the parentNode is a ClassDeclaration
+    if (t.isClassDeclaration(parentNode) && parentNode.id?.name) {
+      if (componentScopes.has(parentNode.id.name)) {
+        return parentNode.id.name;
+      }
+    }
+
     currentPath = currentPath.parentPath;
   }
 
@@ -219,13 +306,7 @@ function getNearestComponentName(
 
 // Check if an attribute is user-facing
 function isUserFacingAttribute(attrName: string): boolean {
-  const userFacingAttributes = [
-    'alt',
-    'title',
-    'placeholder',
-    'aria-label',
-    'aria-labelledby',
-  ];
+  const userFacingAttributes = ['alt', 'title', 'placeholder', 'aria-label'];
   return userFacingAttributes.includes(attrName);
 }
 
@@ -233,7 +314,8 @@ function isUserFacingAttribute(attrName: string): boolean {
 function createStringInfo(
   file: string,
   componentName: string,
-  text: string
+  text: string,
+  options: any = {}
 ): StringInfo {
   const identifier = slugify(text, { lower: true, strict: true })
     .split('-')
@@ -245,5 +327,6 @@ function createStringInfo(
     componentName,
     string: text,
     identifier,
+    ...options,
   };
 }

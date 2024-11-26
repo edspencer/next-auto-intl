@@ -1,6 +1,3 @@
-npm nai command
-npm nai translate -> just translates contents of {baseLanguage}.json to {language}.json for all languages
-npm nai dev -> watch version of run
-npm nai run -> scans files, extracts strings, rewrites components and runs all translations
-npm nai extract -> extracts strings, writes them to {baseLanguage}.json
-npm nai rewrite -> rewrites components where necessary based on contents of {baseLanguage}.json
+[] Check that strings are not urls or email addresses (or phone numbers?) - don't translate if so
+[] NonMemoizedMarkdown is leaking a tailwind config string
+[] Would be nice to have a way to mark strings not to extract/rewrite (e.g. "helpmefind.ai" - not a url but also not translatable)
