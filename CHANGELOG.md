@@ -1,5 +1,18 @@
 # next-auto-intl
 
+## 0.3.0
+
+### Minor Changes
+
+- 1742824: Added npx nai scan
+- 7aaeddb: Optimization: don't re-translate strings we already have translations for
+
+### Patch Changes
+
+- 064c32d: Parallelized rewriteComponents - much faster
+- a70bb08: Fix missing deep merge when updating translations
+- 1742824: Stop pulling out strings without any letters
+
 ## 0.2.0
 
 ### Minor Changes
