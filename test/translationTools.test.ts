@@ -1,19 +1,20 @@
 import fs from 'fs';
 import path from 'path';
 import { saveTranslations } from '../src/utils/translationTools';
+import { createConfiguration } from '../src/utils/configurationTools';
 
 jest.mock('fs');
 const mockedFs = jest.mocked(fs);
 
 describe('saveTranslations', () => {
   const locale = 'en';
-  const config = {
+  const config = createConfiguration({
     messagesDir: './messages',
     scanDirs: ['./app', './components'],
     baseLanguage: 'en',
     targetLanguages: ['pt'],
     lintAfterRewrite: false,
-  };
+  });
 
   const localeFile = path.join(config.messagesDir, `${locale}.json`);
 

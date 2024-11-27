@@ -9,6 +9,7 @@ import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 import { doExtract, doTranslate, doRewrite, doAll } from '../src/utils/process';
+import { createConfiguration } from '../src/utils/configurationTools';
 
 program
   .name('next-auto-intl')
@@ -130,7 +131,14 @@ async function getConfig() {
 
   try {
     const config = await import(configFilePath);
-    return config.default ? config.default : config;
+
+    const projectConfig = config.default ? config.default : config;
+
+    console.log('boo');
+    console.log(projectConfig);
+    console.log(createConfiguration(projectConfig));
+
+    return createConfiguration(projectConfig);
   } catch (error) {
     console.error(`Error loading config file at ${configFilePath}:`, error);
     process.exit(1);

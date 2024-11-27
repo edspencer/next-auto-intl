@@ -9,6 +9,18 @@ export type Configuration = {
   scanDirs: string[];
 
   /**
+   * List of file types to scan for React components.
+   * Defaults to ['js', 'jsx', 'ts', 'tsx'] if not specified.
+   */
+  scanFileTypes: string[];
+
+  /**
+   * If present, overrides the scanDirs option and specifies individual files to scan.
+   * Allows you to target specific files for translation.
+   */
+  scanFiles?: string[];
+
+  /**
    * The base language for the application (e.g., 'en').
    * This language serves as the source for all translations.
    */
@@ -24,7 +36,7 @@ export type Configuration = {
    * Directory where translation files (e.g., JSON) will be stored.
    * Defaults to `./i18n/messages` if not specified.
    */
-  messagesDir?: string;
+  messagesDir: string;
 
   /**
    * Allow multiple components to have the same name in the codebase.
@@ -38,7 +50,7 @@ export type Configuration = {
    * If `true`, source files will be modified to use the `t()` function.
    * Defaults to `false`.
    */
-  rewriteSourceFiles?: boolean;
+  rewriteSourceFiles: boolean;
 
   /**
    * Whether to delete translations that are no longer used in the codebase.
@@ -63,14 +75,16 @@ export type Configuration = {
    * Optional number of parallel translations to run using the configured LLM service.
    * Defaults to 5 if not specified.
    */
-  parallelTranslations?: number;
+  parallelTranslations: number;
 
   /**
    * Optional number of parallel file rewrites to run
    * Defaults to 5 if not specified.
    */
-  parallelRewrites?: number;
+  parallelRewrites: number;
 };
+
+export type ConfigurationOptions = Partial<Configuration>;
 
 /**
  * Represents a single translation item.

@@ -12,7 +12,8 @@ import { Configuration, StringInfo } from '../types';
  * @returns An array of StringInfo objects representing the internationalizable strings.
  */
 export function findAllStrings(config: Configuration) {
-  const files = getJsxFiles(config.scanDirs);
+  const files =
+    config.scanFiles || getJsxFiles(config.scanDirs, config.scanFileTypes);
   let allStrings: StringInfo[] = [];
 
   console.log(`Detected ${files.length} files`);
