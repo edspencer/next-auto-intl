@@ -2,45 +2,50 @@ import path from 'path';
 import fs from 'fs';
 import { execSync } from 'child_process';
 
-import { updateSourceNo as updateSource } from '../src/utils/updateSource';
-import { ComponentStrings } from '../src/types';
+import { NextIntlUpdater } from '../../src/next-intl/updater';
+import { ComponentStrings } from '../../src/types';
+
+function updateSource(sourceCode: string, strings: ComponentStrings): string {
+  const updater = new NextIntlUpdater(sourceCode, strings.strings);
+  return updater.updateSource();
+}
 
 const registerComponentStrings: ComponentStrings = {
   componentName: 'RegisterPage',
   file: '',
   strings: [
     {
-      file: path.resolve(__dirname, 'fixtures', 'RegisterPage.tsx'),
+      file: path.resolve(__dirname, '..', 'fixtures', 'RegisterPage.tsx'),
       componentName: 'RegisterPage',
       string: 'Sign Up',
       identifier: 'sign-up',
     },
     {
-      file: path.resolve(__dirname, 'fixtures', 'RegisterPage.tsx'),
+      file: path.resolve(__dirname, '..', 'fixtures', 'RegisterPage.tsx'),
       componentName: 'RegisterPage',
       string: 'Create an account with your email and password',
       identifier: 'create-an-account-with-your',
     },
     {
-      file: path.resolve(__dirname, 'fixtures', 'RegisterPage.tsx'),
+      file: path.resolve(__dirname, '..', 'fixtures', 'RegisterPage.tsx'),
       componentName: 'RegisterPage',
       string: 'Sign Up',
       identifier: 'sign-up',
     },
     {
-      file: path.resolve(__dirname, 'fixtures', 'RegisterPage.tsx'),
+      file: path.resolve(__dirname, '..', 'fixtures', 'RegisterPage.tsx'),
       componentName: 'RegisterPage',
       string: 'Already have an account?',
       identifier: 'already-have-an-account',
     },
     {
-      file: path.resolve(__dirname, 'fixtures', 'RegisterPage.tsx'),
+      file: path.resolve(__dirname, '..', 'fixtures', 'RegisterPage.tsx'),
       componentName: 'RegisterPage',
       string: 'Sign in',
       identifier: 'sign-in',
     },
     {
-      file: path.resolve(__dirname, 'fixtures', 'RegisterPage.tsx'),
+      file: path.resolve(__dirname, '..', 'fixtures', 'RegisterPage.tsx'),
       componentName: 'RegisterPage',
       string: 'instead.',
       identifier: 'instead',
@@ -67,10 +72,11 @@ const itemsComponentStrings: ComponentStrings = {
   ],
 };
 
-xdescribe('updateSourceFile', () => {
+describe('updateSourceFile', () => {
   it('should transform the Register Page properly', () => {
     const expectedOutputFile = path.resolve(
       __dirname,
+      '..',
       'fixtures',
       'RegisterPage.Transformed.tsx'
     );
@@ -79,6 +85,9 @@ xdescribe('updateSourceFile', () => {
 
     const transformedCode = transformPage();
 
+    // console.log(expectedOutput);
+    // console.log(transformedCode);
+
     // Compare the formatted outputs
     expect(transformedCode).toEqual(expectedOutput);
   });
@@ -86,6 +95,7 @@ xdescribe('updateSourceFile', () => {
   it('should be idempotent', () => {
     const expectedOutputFile = path.resolve(
       __dirname,
+      '..',
       'fixtures',
       'RegisterPage.Transformed.tsx'
     );
@@ -106,6 +116,7 @@ xdescribe('updateSourceFile', () => {
   it('should transform partially-updated files correctly', () => {
     const expectedOutputFile = path.resolve(
       __dirname,
+      '..',
       'fixtures',
       'PartiallyUpdated.Transformed.tsx'
     );
@@ -121,13 +132,21 @@ xdescribe('updateSourceFile', () => {
   it('should handle files with weird punctuation correctly', () => {
     const expectedOutputFile = path.resolve(
       __dirname,
+      '..',
       'fixtures',
       'Items.Transformed.tsx'
     );
 
     const expectedOutput = formattedSourceFile(expectedOutputFile);
 
-    const transformedCode = transformPage('Items.tsx', itemsComponentStrings);
+    const transformedCode = transformPage(
+      'Items.tsx',
+      registerComponentStrings
+    );
+
+    console.log(registerComponentStrings);
+
+    console.log(transformedCode);
 
     // Compare the formatted outputs
     expect(transformedCode).toEqual(expectedOutput);
@@ -138,12 +157,12 @@ function transformPage(
   fileName: string = 'RegisterPage.tsx',
   componentStrings = registerComponentStrings
 ): string {
-  const inputFile = path.resolve(__dirname, 'fixtures', fileName);
+  const inputFile = path.resolve(__dirname, '..', 'fixtures', fileName);
 
   const inputCode = fs.readFileSync(inputFile, 'utf-8');
 
   // Run the transformation
-  const transformedCode = updateSource(inputCode, registerComponentStrings);
+  const transformedCode = updateSource(inputCode, componentStrings);
 
   return formatWithPrettier(transformedCode);
 }

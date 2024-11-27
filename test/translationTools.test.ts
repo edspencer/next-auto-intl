@@ -14,6 +14,7 @@ describe('saveTranslations', () => {
     baseLanguage: 'en',
     targetLanguages: ['pt'],
     lintAfterRewrite: false,
+    targetLibrary: 'next-intl',
   });
 
   const localeFile = path.join(config.messagesDir, `${locale}.json`);

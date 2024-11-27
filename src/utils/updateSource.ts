@@ -26,7 +26,7 @@ import { ComponentStrings } from '../types';
  *    - Inject `const t = useTranslations('Namespace');` at the top of the specified component function.
  *    - Replace static strings in JSX elements with calls to the translation function `t`.
  */
-export function updateSource(
+export function updateSourceNo(
   source: string,
   componentStrings: ComponentStrings
 ): string {

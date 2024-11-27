@@ -3,7 +3,6 @@ import fs from 'fs';
 import path from 'path';
 import { promisify } from 'util';
 
-import { updateSource } from './updateSource';
 import {
   translateStrings,
   saveTranslations,
@@ -95,7 +94,7 @@ export async function rewriteComponent(
   component: ComponentStrings,
   config: Configuration
 ): Promise<boolean> {
-  const { lintAfterRewrite } = config;
+  const { lintAfterRewrite, targetLibrary } = config;
 
   //if everything is already translated, we don't need to rewrite
   if (component.strings.every((s) => s.alreadyUpdated)) {
@@ -106,7 +105,7 @@ export async function rewriteComponent(
   console.log('Rewriting component:', component.componentName);
 
   const source = fs.readFileSync(component.file, 'utf8');
-  const updated = updateSource(source, component);
+  const updated = targetLibrary.updateSource(source, component.strings);
 
   try {
     fs.writeFileSync(component.file, formatWithPrettier(updated));

@@ -89,6 +89,8 @@ export type Configuration = {
    * Optional command to run ESLint with the `--fix` option.
    */
   lintCommand: (filename: string) => string;
+
+  targetLibrary: TargetLibrary;
 };
 
 export type RewriteConfiguration = {
@@ -116,9 +118,18 @@ export type RewriteConfiguration = {
   parallelRewrites: number;
 };
 
-export type ConfigurationOptions = Partial<Configuration>;
+//the set of allowed target libraries by string name
+export type AllowedTargetLibraries = 'next-intl';
 
-// types.ts
+export type ConfigurationOptions = Partial<
+  Omit<Configuration, 'targetLibrary'>
+> & {
+  /**
+   * The target internationalization library to use.
+   * Can be a string from the allowed list or a custom TargetLibrary implementation.
+   */
+  targetLibrary?: AllowedTargetLibraries | TargetLibrary;
+};
 
 export interface TargetLibrary {
   /**
@@ -133,16 +144,13 @@ export interface TargetLibrary {
   /**
    * Updates the source code by replacing strings with the appropriate translation functions.
    */
-  updateSource(
-    sourceCode: string,
-    strings: StringInfo[],
-    locale: string
-  ): string;
+  updateSource(sourceCode: string, strings: StringInfo[]): string;
 
-  /**
-   * Any additional methods needed for the library.
-   */
-  // ... Other methods if necessary
+  writeTranslations?(
+    messages: MessagesObject,
+    locale: string,
+    messagesDir: string
+  ): void;
 }
 
 /**

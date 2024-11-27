@@ -13,12 +13,8 @@ export const NextIntlLibrary: TargetLibrary = {
     return extractor.extractStrings();
   },
 
-  updateSource(
-    sourceCode: string,
-    strings: StringInfo[],
-    locale: string
-  ): string {
-    const updater = new NextIntlUpdater(sourceCode, strings, locale);
+  updateSource(sourceCode: string, strings: StringInfo[]): string {
+    const updater = new NextIntlUpdater(sourceCode, strings);
     return updater.updateSource();
   },
 };
