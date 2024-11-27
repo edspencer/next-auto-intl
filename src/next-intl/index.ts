@@ -3,6 +3,9 @@ import { NextIntlExtractor } from './extractor';
 import { NextIntlUpdater } from './updater';
 import * as t from '@babel/types';
 
+export * from './extractor';
+export * from './updater';
+
 export const NextIntlLibrary: TargetLibrary = {
   extractStrings(
     ast: t.File,

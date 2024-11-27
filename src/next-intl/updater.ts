@@ -3,12 +3,15 @@
 import * as babelParser from '@babel/parser';
 import * as babelTraverse from '@babel/traverse';
 import * as t from '@babel/types';
-import generate from '@babel/generator';
+import * as babelGenerate from '@babel/generator';
 import { BaseUpdater } from '../updater/baseUpdater';
 import { StringInfo } from '../types';
 
 let traverse = babelTraverse.default || babelTraverse;
 traverse = (traverse as any).default || traverse;
+
+let generate = babelGenerate.default || babelGenerate;
+generate = (generate as any).default || generate;
 
 export class NextIntlUpdater extends BaseUpdater {
   updateSource(): string {

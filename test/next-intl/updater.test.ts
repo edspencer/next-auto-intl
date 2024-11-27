@@ -82,13 +82,8 @@ describe('updateSourceFile', () => {
     );
 
     const expectedOutput = formattedSourceFile(expectedOutputFile);
-
     const transformedCode = transformPage();
 
-    // console.log(expectedOutput);
-    // console.log(transformedCode);
-
-    // Compare the formatted outputs
     expect(transformedCode).toEqual(expectedOutput);
   });
 
@@ -143,10 +138,6 @@ describe('updateSourceFile', () => {
       'Items.tsx',
       registerComponentStrings
     );
-
-    console.log(registerComponentStrings);
-
-    console.log(transformedCode);
 
     // Compare the formatted outputs
     expect(transformedCode).toEqual(expectedOutput);
