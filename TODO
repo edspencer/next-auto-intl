@@ -1,7 +1,8 @@
 [] Check that strings are not urls or email addresses (or phone numbers?) - don't translate if so
 [] NonMemoizedMarkdown is leaking a tailwind config string
 [] Would be nice to have a way to mark strings not to extract/rewrite (e.g. "helpmefind.ai" - not a url but also not translatable)
-[] Support decorator to translate strings inside non-JSX JS objects
+[] Support decorator to translate strings inside non-JSX JS objects (see also https://lingui.dev/guides/message-extraction#explicitly-marking-messages)
 [] Generalize to react-auto-intl. Support other libraries like react-intl, i18next, etc.
 [] Let most of the functions like translateComponent be overridable in Configuration object, but default to next-auto-intl's implementation. Allows dev to override any part of the logic
 [] Support ternary operators inside JSX (e.g. {isLoading ? "Loading..." : "Loaded"}) should extract 2 strings
+[] winston logger

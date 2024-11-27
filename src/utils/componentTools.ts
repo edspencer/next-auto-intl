@@ -119,7 +119,7 @@ export async function rewriteComponent(
   if (lintAfterRewrite) {
     console.log('Linting with eslint --fix:', component.file);
     try {
-      await execAsync(`npx eslint --fix "${component.file}"`);
+      await execAsync(config.lintCommand(component.file));
     } catch (e) {
       console.error('Error running eslint --fix');
       console.error(e);
@@ -128,6 +128,10 @@ export async function rewriteComponent(
   }
 
   return true;
+}
+
+export function lintCommand(file: string): string {
+  return `npx eslint --fix "${file}"`;
 }
 
 /**

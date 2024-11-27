@@ -1,3 +1,5 @@
+import * as t from '@babel/types';
+
 /**
  * Configuration object for the automatic internationalization tool.
  */
@@ -82,9 +84,66 @@ export type Configuration = {
    * Defaults to 5 if not specified.
    */
   parallelRewrites: number;
+
+  /**
+   * Optional command to run ESLint with the `--fix` option.
+   */
+  lintCommand: (filename: string) => string;
+};
+
+export type RewriteConfiguration = {
+  /**
+   * Whether to rewrite source files to replace strings with translation functions.
+   */
+  rewriteSourceFiles: boolean;
+
+  /**
+   * Whether to run ESLint's `--fix` option on source files after rewriting them.
+   * Helps ensure that rewritten files conform to the project's coding standards.
+   */
+  lintAfterRewrite: boolean;
+
+  /**
+   * Callback that returns the CLI command to run to lint the file
+   * (defaults to 'eslint --fix "<filename>">')
+   */
+  lintCommand: (filename: string) => string;
+
+  /**
+   * Optional number of parallel file rewrites to run
+   * Defaults to 5 if not specified.
+   */
+  parallelRewrites: number;
 };
 
 export type ConfigurationOptions = Partial<Configuration>;
+
+// types.ts
+
+export interface TargetLibrary {
+  /**
+   * Extracts strings from the AST and returns an array of StringInfo.
+   */
+  extractStrings(
+    ast: t.File,
+    filePath: string,
+    baseLanguageStrings: MessagesObject
+  ): StringInfo[];
+
+  /**
+   * Updates the source code by replacing strings with the appropriate translation functions.
+   */
+  updateSource(
+    sourceCode: string,
+    strings: StringInfo[],
+    locale: string
+  ): string;
+
+  /**
+   * Any additional methods needed for the library.
+   */
+  // ... Other methods if necessary
+}
 
 /**
  * Represents a single translation item.

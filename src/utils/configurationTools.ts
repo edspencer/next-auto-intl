@@ -1,4 +1,5 @@
 import { Configuration } from '../types';
+import { lintCommand } from './componentTools';
 
 export function createConfiguration(
   config: Partial<Configuration>
@@ -14,6 +15,8 @@ export function createConfiguration(
     lintAfterRewrite: true,
     parallelRewrites: 5,
     parallelTranslations: 5,
+
+    lintCommand,
     ...config,
   };
 }
