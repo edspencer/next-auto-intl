@@ -1,5 +1,18 @@
 # next-auto-intl
 
+## 0.4.0
+
+### Minor Changes
+
+- 13817ff: Added lintCommand configuration option
+- 13817ff: Allow configuration of scanFiles and scanFileTypes
+- 13817ff: Support other i18n frameworks beyond next-intl
+- 13817ff: Support class declaration components
+
+### Patch Changes
+
+- 13817ff: Added createConfiguration helper
+
 ## 0.3.0
 
 ### Minor Changes
