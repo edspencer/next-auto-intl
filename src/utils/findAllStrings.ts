@@ -1,6 +1,5 @@
 import { getJsxFiles } from '../utils/fileScanner';
 import { parseFile } from '../utils/parser';
-import { extractStrings } from '../extractStrings';
 import { loadBaseTranslations } from '../utils/translationTools';
 
 import { Configuration, StringInfo } from '../types';
@@ -12,7 +11,8 @@ import { Configuration, StringInfo } from '../types';
  * @returns An array of StringInfo objects representing the internationalizable strings.
  */
 export function findAllStrings(config: Configuration) {
-  const files = getJsxFiles(config.scanDirs);
+  const files =
+    config.scanFiles || getJsxFiles(config.scanDirs, config.scanFileTypes);
   let allStrings: StringInfo[] = [];
 
   console.log(`Detected ${files.length} files`);
@@ -23,7 +23,11 @@ export function findAllStrings(config: Configuration) {
 
   for (const file of files) {
     const ast = parseFile(file);
-    const strings = extractStrings(ast, file, baseTranslations);
+    const strings = config.targetLibrary.extractStrings(
+      ast,
+      file,
+      baseTranslations
+    );
     allStrings = allStrings.concat(strings);
   }
 

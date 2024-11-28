@@ -3,7 +3,6 @@ import fs from 'fs';
 import path from 'path';
 import { promisify } from 'util';
 
-import { updateSource } from './updateSource';
 import {
   translateStrings,
   saveTranslations,
@@ -95,12 +94,18 @@ export async function rewriteComponent(
   component: ComponentStrings,
   config: Configuration
 ): Promise<boolean> {
-  const { lintAfterRewrite } = config;
+  const { lintAfterRewrite, targetLibrary } = config;
+
+  //if everything is already translated, we don't need to rewrite
+  if (component.strings.every((s) => s.alreadyUpdated)) {
+    console.log('Component already updated:', component.componentName);
+    return true;
+  }
 
   console.log('Rewriting component:', component.componentName);
 
   const source = fs.readFileSync(component.file, 'utf8');
-  const updated = updateSource(source, component);
+  const updated = targetLibrary.updateSource(source, component.strings);
 
   try {
     fs.writeFileSync(component.file, formatWithPrettier(updated));
@@ -113,7 +118,7 @@ export async function rewriteComponent(
   if (lintAfterRewrite) {
     console.log('Linting with eslint --fix:', component.file);
     try {
-      await execAsync(`npx eslint --fix "${component.file}"`);
+      await execAsync(config.lintCommand(component.file));
     } catch (e) {
       console.error('Error running eslint --fix');
       console.error(e);
@@ -122,6 +127,10 @@ export async function rewriteComponent(
   }
 
   return true;
+}
+
+export function lintCommand(file: string): string {
+  return `npx eslint --fix "${file}"`;
 }
 
 /**

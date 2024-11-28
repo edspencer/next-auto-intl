@@ -7,10 +7,13 @@ export function Items() {
   } = useSWR<Array<Item>>('/api/items', fetcher, {
     fallbackData: [],
   });
+
   if (isLoading || !items) {
     return <div>Loading...</div>;
   }
+
   const groups = groupItemsByPlace(items);
+
   return (
     <div>
       <h2 className="font-bold mb-2">{items.length} Items</h2>

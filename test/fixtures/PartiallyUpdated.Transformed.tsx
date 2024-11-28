@@ -4,6 +4,7 @@
  * This component has been next-intl'd before, but new strings have been added,
  * so we can test that we handle those properly.
  */
+
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';

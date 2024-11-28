@@ -39,7 +39,9 @@ export async function doExtract(
     `Found ${componentStrings.length} internationalizable components`
   );
 
-  console.log(`String extraction complete, found ${allStrings.length} strings`);
+  console.log(
+    `String extraction complete, found ${allStrings.length} strings.\n`
+  );
 
   if (saveMessages) {
     //save the base language messages
