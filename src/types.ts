@@ -146,10 +146,10 @@ export interface TargetLibrary {
    */
   updateSource(sourceCode: string, strings: StringInfo[]): string;
 
-  writeTranslations?(
+  saveTranslations(
     messages: MessagesObject,
     locale: string,
-    messagesDir: string
+    config: Configuration
   ): void;
 }
 

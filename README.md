@@ -1,10 +1,12 @@
-# Internationalization, meet AI
+# React Internationalization, meet AI
 
-**next-auto-intl** automates the internationalization (i18n) process for Next.js applications. It builds on top of the excellent [next-intl](https://next-intl-docs.vercel.app/) library, and does 3 things:
+**react-auto-intl** automates the internationalization (i18n) process for React applications. It works great with the excellent [react-intl](https://formatjs.github.io/docs/react-intl/) and [next-intl](https://next-intl-docs.vercel.app/) libraries, and does 3 things:
 
-1. automatically detects all of the user-facing strings in your React components, **extracting** into a next-intl JSON file
-2. optionally **rewrites** your JSX components to use `next-intl` instead of hard-coded strings
+1. automatically detects all of the user-facing strings in your React components, **extracting** into your i18n framework's storage format for you
+2. automatically **rewrites** your JSX components to use `next-intl` instead of hard-coded strings
 3. automatically **translates** all of the user-facing strings into any number of languages, using an LLM of your choice
+
+You can opt in or out of any of these steps, and you can run the process any number of times, so you can work in your native language and have confidence that most of the internationalization work will be done by a single fast CLI command.
 
 ## Features
 

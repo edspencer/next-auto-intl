@@ -5,7 +5,7 @@ import { duplicateNameDetector } from './duplicateNameDetector';
 import { translateComponent, rewriteComponent } from './componentTools';
 import { convertToComponentStrings } from './convertToComponentStrings';
 import { findAllStrings } from './findAllStrings';
-import { createMessagesObject, saveTranslations } from './translationTools';
+import { createMessagesObject } from './translationTools';
 
 /**
  * Processes all the steps: extraction, rewriting, and translation.
@@ -48,7 +48,7 @@ export async function doExtract(
     console.log('Saving base language messages');
     const messages = createMessagesObject(allStrings);
 
-    await saveTranslations(messages, baseLanguage, config);
+    await config.targetLibrary.saveTranslations(messages, baseLanguage, config);
 
     console.log(`wrote to ${baseLanguage}.json`);
   }
