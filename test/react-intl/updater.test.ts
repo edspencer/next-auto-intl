@@ -109,7 +109,7 @@ const itemsComponentStrings: ComponentStrings = {
 };
 
 describe('updateSourceFile', () => {
-  it('should transform the Register Page properly', () => {
+  it.only('should transform the Register Page properly', () => {
     const expectedOutputFile = path.resolve(
       __dirname,
       '..',

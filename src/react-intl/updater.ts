@@ -8,7 +8,15 @@ import { StringInfo } from '../types';
 const traverse = babelTraverse.default || babelTraverse;
 const generate = babelGenerate.default || babelGenerate;
 
+/**
+ * Updates React components by replacing hardcoded strings
+ * with React Intl components and functions for internationalization.
+ */
 export class ReactIntlUpdater extends BaseUpdater {
+  /**
+   * Updates the source code by replacing strings with internationalized versions.
+   * @returns {string} The updated source code as a string.
+   */
   updateSource(): string {
     const ast = babelParser.parse(this.sourceCode, {
       sourceType: 'module',
@@ -28,10 +36,13 @@ export class ReactIntlUpdater extends BaseUpdater {
     try {
       traverse(ast, {
         Program: (path) => {
-          // We'll add imports at the end based on flags
+          // Imports will be added at the end based on flags
         },
 
-        // Handle function components (FunctionDeclaration)
+        /**
+         * Handles function components defined as FunctionDeclaration.
+         * Injects useIntl hook if necessary.
+         */
         FunctionDeclaration: (path) => {
           const node = path.node;
           const componentName = node.id?.name;
@@ -42,7 +53,10 @@ export class ReactIntlUpdater extends BaseUpdater {
           }
         },
 
-        // Handle arrow function components assigned to variables (VariableDeclarator)
+        /**
+         * Handles function components defined as VariableDeclarator with function expressions.
+         * Injects useIntl hook if necessary.
+         */
         VariableDeclarator: (path) => {
           const node = path.node;
           const id = node.id;
@@ -68,11 +82,17 @@ export class ReactIntlUpdater extends BaseUpdater {
           }
         },
 
+        /**
+         * Replaces JSXText nodes with FormattedMessage components.
+         */
         JSXElement: (path) => {
           const didReplace = this.replaceJSXElementStrings(path, stringMap);
           if (didReplace) needsFormattedMessageImport = true;
         },
 
+        /**
+         * Replaces string literals in JSX attributes with intl.formatMessage calls.
+         */
         JSXAttribute: (path) => {
           // Skip if we're inside a FormattedMessage component
           if (this.isInFormattedMessage(path)) return;
@@ -81,6 +101,9 @@ export class ReactIntlUpdater extends BaseUpdater {
           if (didReplace) needsUseIntlImport = true;
         },
 
+        /**
+         * Replaces string literals in JSXExpressionContainer nodes.
+         */
         JSXExpressionContainer: (path) => {
           // Skip if we're inside a FormattedMessage component
           if (this.isInFormattedMessage(path)) return;
@@ -109,6 +132,13 @@ export class ReactIntlUpdater extends BaseUpdater {
     return output.code;
   }
 
+  /**
+   * Ensures that necessary imports from 'react-intl' are present.
+   * Merges imports into a single line if possible.
+   * @param path The Program node path.
+   * @param needsFormattedMessageImport Whether 'FormattedMessage' needs to be imported.
+   * @param needsUseIntlImport Whether 'useIntl' needs to be imported.
+   */
   private ensureImports(
     path: babelTraverse.NodePath<t.Program>,
     needsFormattedMessageImport: boolean,
@@ -182,6 +212,12 @@ export class ReactIntlUpdater extends BaseUpdater {
     }
   }
 
+  /**
+   * Injects the 'useIntl' hook into the component function if not already present.
+   * @param path The function node path (FunctionDeclaration or VariableDeclarator).
+   * @param componentName The name of the component.
+   * @returns {boolean} True if 'useIntl' was injected, false otherwise.
+   */
   private injectUseIntlHook(
     path: babelTraverse.NodePath<t.FunctionDeclaration | t.VariableDeclarator>,
     componentName: string
@@ -232,6 +268,12 @@ export class ReactIntlUpdater extends BaseUpdater {
     return false;
   }
 
+  /**
+   * Replaces JSXText nodes with FormattedMessage components where necessary.
+   * @param path The JSXElement node path.
+   * @param stringMap A map of strings to their corresponding StringInfo.
+   * @returns {boolean} True if any replacements were made, false otherwise.
+   */
   private replaceJSXElementStrings(
     path: babelTraverse.NodePath<t.JSXElement>,
     stringMap: Map<string, StringInfo>
@@ -252,7 +294,11 @@ export class ReactIntlUpdater extends BaseUpdater {
                   t.jsxIdentifier('id'),
                   t.stringLiteral(strInfo.identifier)
                 ),
-                // Omit defaultMessage if not needed
+                // include defaultMessage
+                t.jsxAttribute(
+                  t.jsxIdentifier('defaultMessage'),
+                  t.stringLiteral(strInfo.string)
+                ),
               ],
               true
             ),
@@ -274,6 +320,12 @@ export class ReactIntlUpdater extends BaseUpdater {
     return didReplace;
   }
 
+  /**
+   * Replaces string literals in JSX attributes with intl.formatMessage calls.
+   * @param path The JSXAttribute node path.
+   * @param stringMap A map of strings to their corresponding StringInfo.
+   * @returns {boolean} True if a replacement was made, false otherwise.
+   */
   private replaceJSXAttributeStrings(
     path: babelTraverse.NodePath<t.JSXAttribute>,
     stringMap: Map<string, StringInfo>
@@ -293,7 +345,7 @@ export class ReactIntlUpdater extends BaseUpdater {
       if (stringMap.has(value)) {
         const strInfo = stringMap.get(value)!;
 
-        // For attributes like 'title', 'alt', we can use intl.formatMessage
+        // Use intl.formatMessage for attributes
         const formatMessageCall = t.callExpression(
           t.memberExpression(
             t.identifier('intl'),
@@ -305,20 +357,30 @@ export class ReactIntlUpdater extends BaseUpdater {
                 t.identifier('id'),
                 t.stringLiteral(strInfo.identifier)
               ),
-              // Omit defaultMessage if not needed
+              // include defaultMessage
+              t.objectProperty(
+                t.identifier('defaultMessage'),
+                t.stringLiteral(strInfo.string)
+              ),
             ]),
           ]
         );
 
         path.node.value = t.jsxExpressionContainer(formatMessageCall);
 
-        return true; // Indicate that we made a replacement
+        return true; // Indicate that a replacement was made
       }
     }
 
     return false;
   }
 
+  /**
+   * Replaces string literals in JSXExpressionContainer nodes with FormattedMessage components or intl.formatMessage calls.
+   * @param path The JSXExpressionContainer node path.
+   * @param stringMap A map of strings to their corresponding StringInfo.
+   * @returns {boolean} True if a replacement was made, false otherwise.
+   */
   private replaceExpressionStrings(
     path: babelTraverse.NodePath<t.JSXExpressionContainer>,
     stringMap: Map<string, StringInfo>
@@ -335,7 +397,7 @@ export class ReactIntlUpdater extends BaseUpdater {
         const parentPath = path.parentPath;
 
         if (parentPath.isJSXElement() || parentPath.isJSXFragment()) {
-          // If it's used as a child, replace with <FormattedMessage />
+          // Replace with <FormattedMessage /> if used as a child
           const formattedMessageElement = t.jsxElement(
             t.jsxOpeningElement(
               t.jsxIdentifier('FormattedMessage'),
@@ -344,7 +406,11 @@ export class ReactIntlUpdater extends BaseUpdater {
                   t.jsxIdentifier('id'),
                   t.stringLiteral(strInfo.identifier)
                 ),
-                // Omit defaultMessage if not needed
+                // include defaultMessage
+                t.jsxAttribute(
+                  t.jsxIdentifier('defaultMessage'),
+                  t.stringLiteral(strInfo.string)
+                ),
               ],
               true
             ),
@@ -358,9 +424,9 @@ export class ReactIntlUpdater extends BaseUpdater {
           // Skip traversal into the new node
           path.skip();
 
-          return true; // Indicate that we made a replacement
+          return true; // Indicate that a replacement was made
         } else {
-          // Otherwise, use intl.formatMessage
+          // Use intl.formatMessage in other contexts
           const formatMessageCall = t.callExpression(
             t.memberExpression(
               t.identifier('intl'),
@@ -372,14 +438,18 @@ export class ReactIntlUpdater extends BaseUpdater {
                   t.identifier('id'),
                   t.stringLiteral(strInfo.identifier)
                 ),
-                // Omit defaultMessage if not needed
+                // include defaultMessage
+                t.objectProperty(
+                  t.identifier('defaultMessage'),
+                  t.stringLiteral(strInfo.string)
+                ),
               ]),
             ]
           );
 
           path.replaceWith(t.jsxExpressionContainer(formatMessageCall));
 
-          return true; // Indicate that we made a replacement
+          return true; // Indicate that a replacement was made
         }
       }
     }
@@ -387,6 +457,12 @@ export class ReactIntlUpdater extends BaseUpdater {
     return false;
   }
 
+  /**
+   * Determines if the current path is within a FormattedMessage component.
+   * Used to prevent processing nodes inside FormattedMessage.
+   * @param path The current node path.
+   * @returns {boolean} True if inside a FormattedMessage component, false otherwise.
+   */
   private isInFormattedMessage(path: babelTraverse.NodePath): boolean {
     return path.findParent(
       (p) =>

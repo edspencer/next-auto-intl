@@ -46,25 +46,31 @@ export default function RegisterPage() {
       <div className="w-full max-w-md overflow-hidden rounded-2xl gap-12 flex flex-col">
         <div className="flex flex-col items-center justify-center gap-2 px-4 text-center sm:px-16">
           <h3 className="text-xl font-semibold dark:text-zinc-50">
-            <FormattedMessage id="sign-up" />
+            <FormattedMessage id="sign-up" defaultMessage="Sign Up" />
           </h3>
           <p className="text-sm text-gray-500 dark:text-zinc-400">
-            <FormattedMessage id="create-an-account-with-your" />
+            <FormattedMessage
+              id="create-an-account-with-your"
+              defaultMessage="Create an account with your email and password"
+            />
           </p>
         </div>
         <AuthForm action={handleSubmit} defaultEmail={email}>
           <SubmitButton>
-            <FormattedMessage id="sign-up" />
+            <FormattedMessage id="sign-up" defaultMessage="Sign Up" />
           </SubmitButton>
           <p className="text-center text-sm text-gray-600 mt-4 dark:text-zinc-400">
-            <FormattedMessage id="already-have-an-account" />
+            <FormattedMessage
+              id="already-have-an-account"
+              defaultMessage="Already have an account?"
+            />
             <Link
               href="/login"
               className="font-semibold text-gray-800 hover:underline dark:text-zinc-200"
             >
-              <FormattedMessage id="sign-in" />
+              <FormattedMessage id="sign-in" defaultMessage="Sign in" />
             </Link>
-            <FormattedMessage id="instead" />
+            <FormattedMessage id="instead" defaultMessage="instead." />
           </p>
         </AuthForm>
       </div>

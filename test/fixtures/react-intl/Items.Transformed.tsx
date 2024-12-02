@@ -12,7 +12,7 @@ export function Items() {
   if (isLoading || !items) {
     return (
       <div>
-        <FormattedMessage id="loading" />
+        <FormattedMessage id="loading" defaultMessage="Loading..." />
       </div>
     );
   }
@@ -23,7 +23,7 @@ export function Items() {
     <div>
       <h2 className="font-bold mb-2">
         {items.length}
-        <FormattedMessage id="items" />
+        <FormattedMessage id="items" defaultMessage="Items" />
       </h2>
       <ul>
         {Object.entries(groups).map(([place, items]) => (
