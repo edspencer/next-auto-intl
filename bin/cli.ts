@@ -123,7 +123,7 @@ async function getConfig() {
   const configFilePath = path.resolve(
     process.cwd(),
     'i18n',
-    'auto-intl.config.mjs'
+    'auto-intl.config.js'
   );
 
   console.log(configFilePath);

@@ -106,7 +106,7 @@ export default [
         exclude: ['test/**/*', 'src/script/**/*'],
       }),
       copy({
-        targets: [{ src: 'bin/auto-intl.config.mjs', dest: 'dist/bin' }],
+        targets: [{ src: 'bin/default-config.js', dest: 'dist/bin' }],
       }),
     ],
     external: externalDependencies,
