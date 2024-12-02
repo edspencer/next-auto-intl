@@ -17,5 +17,11 @@
     "isolatedModules": false
   },
   "include": ["src/**/*.ts", "bin/**/*.ts"],
-  "exclude": ["test", "test/fixtures", "jest.config.ts", "node_modules"]
+  "exclude": [
+    "test",
+    "test/fixtures",
+    "jest.config.ts",
+    "node_modules",
+    "bin/default-config.js"
+  ]
 }

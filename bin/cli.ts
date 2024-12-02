@@ -34,14 +34,18 @@ program
     );
 
     // const answers = await inquirer.prompt(questions);
+
+    const appConfigFileDir = path.resolve(process.cwd(), 'i18n');
     const appConfigFilePath = path.resolve(
-      process.cwd(),
-      'i18n/auto-intl.config.mjs'
+      appConfigFileDir,
+      'auto-intl.config.js'
     );
+
+    fs.mkdirSync(appConfigFileDir, { recursive: true });
 
     fs.writeFileSync(
       appConfigFilePath,
-      fs.readFileSync(path.resolve(__dirname, './auto-intl.config.mjs'))
+      fs.readFileSync(path.resolve(__dirname, './default-config.js'))
     );
     console.log(`Config file created at ${appConfigFilePath}`);
   });
