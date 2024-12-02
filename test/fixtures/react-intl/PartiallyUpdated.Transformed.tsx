@@ -1,20 +1,20 @@
 'use client';
-import { FormattedMessage, useIntl } from 'react-intl';
 
+/**
+ * This component has been next-intl'd before, but new strings have been added,
+ * so we can test that we handle those properly.
+ */
+import { FormattedMessage, useIntl } from 'react-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useActionState, useEffect, useState } from 'react';
 import { toast } from 'sonner';
-
 import { AuthForm } from '@/components/custom/auth-form';
 import { SubmitButton } from '@/components/custom/submit-button';
-
 import { register, RegisterActionState } from '../actions';
-
 export default function RegisterPage() {
   const intl = useIntl();
   const router = useRouter();
-
   const [email, setEmail] = useState('');
   const [state, formAction] = useActionState<RegisterActionState, FormData>(
     register,
@@ -22,7 +22,6 @@ export default function RegisterPage() {
       status: 'idle',
     }
   );
-
   useEffect(() => {
     if (state.status === 'user_exists') {
       toast.error('Account already exists');
@@ -35,12 +34,10 @@ export default function RegisterPage() {
       router.refresh();
     }
   }, [state, router]);
-
   const handleSubmit = (formData: FormData) => {
     setEmail(formData.get('email') as string);
     formAction(formData);
   };
-
   return (
     <div className="flex h-dvh w-screen items-start pt-12 md:pt-0 md:items-center justify-center bg-background">
       <div className="w-full max-w-md overflow-hidden rounded-2xl gap-12 flex flex-col">

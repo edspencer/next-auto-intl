@@ -1,6 +1,6 @@
-import { useTranslations } from 'next-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 export function Items() {
-  const t = useTranslations('Items');
+  const intl = useIntl();
   const {
     data: items,
     isLoading,
@@ -10,7 +10,11 @@ export function Items() {
   });
 
   if (isLoading || !items) {
-    return <div>{t('loading')}</div>;
+    return (
+      <div>
+        <FormattedMessage id="loading" />
+      </div>
+    );
   }
 
   const groups = groupItemsByPlace(items);
@@ -19,7 +23,7 @@ export function Items() {
     <div>
       <h2 className="font-bold mb-2">
         {items.length}
-        {t('items')}
+        <FormattedMessage id="items" />
       </h2>
       <ul>
         {Object.entries(groups).map(([place, items]) => (

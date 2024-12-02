@@ -16,6 +16,7 @@ export class ReactIntlUpdater extends BaseUpdater {
     });
 
     const { strings } = this;
+    const componentNames = new Set(strings.map((str) => str.componentName));
     const stringMap = new Map<string, StringInfo>();
     strings.forEach((strInfo) => {
       stringMap.set(strInfo.string, strInfo);
@@ -24,124 +25,189 @@ export class ReactIntlUpdater extends BaseUpdater {
     let needsFormattedMessageImport = false;
     let needsUseIntlImport = false;
 
-    traverse(ast, {
-      Program: (path) => {
-        this.ensureImports(path);
-      },
+    try {
+      traverse(ast, {
+        Program: (path) => {
+          // We'll add imports at the end based on flags
+        },
 
-      FunctionDeclaration: (path) => {
-        const componentName = path.node.id?.name;
-        if (componentName) {
-          this.injectUseIntlHook(path);
-        }
-      },
+        // Handle function components (FunctionDeclaration)
+        FunctionDeclaration: (path) => {
+          const node = path.node;
+          const componentName = node.id?.name;
 
-      VariableDeclarator: (path) => {
-        const id = path.node.id;
-        const init = path.node.init;
+          if (componentName && componentNames.has(componentName)) {
+            const didInject = this.injectUseIntlHook(path, componentName);
+            if (didInject) needsUseIntlImport = true;
+          }
+        },
 
-        if (
-          t.isIdentifier(id) &&
-          (t.isArrowFunctionExpression(init) || t.isFunctionExpression(init))
-        ) {
-          this.injectUseIntlHook(path);
-        }
-      },
+        // Handle arrow function components assigned to variables (VariableDeclarator)
+        VariableDeclarator: (path) => {
+          const node = path.node;
+          const id = node.id;
+          const init = node.init;
 
-      JSXElement: (path) => {
-        this.replaceJSXElementStrings(path, stringMap);
-        needsFormattedMessageImport = true;
-      },
+          if (
+            t.isIdentifier(id) &&
+            componentNames.has(id.name) &&
+            (t.isArrowFunctionExpression(init) || t.isFunctionExpression(init))
+          ) {
+            const componentName = id.name;
+            const functionBody = init.body;
 
-      JSXAttribute: (path) => {
-        this.replaceJSXAttributeStrings(path, stringMap);
-      },
+            // Ensure the function body is a BlockStatement
+            if (!t.isBlockStatement(functionBody)) {
+              init.body = t.blockStatement([
+                t.returnStatement(functionBody as t.Expression),
+              ]);
+            }
 
-      JSXExpressionContainer: (path) => {
-        this.replaceExpressionStrings(path, stringMap);
-        needsUseIntlImport = true;
-      },
-    });
+            const didInject = this.injectUseIntlHook(path, componentName);
+            if (didInject) needsUseIntlImport = true;
+          }
+        },
+
+        JSXElement: (path) => {
+          const didReplace = this.replaceJSXElementStrings(path, stringMap);
+          if (didReplace) needsFormattedMessageImport = true;
+        },
+
+        JSXAttribute: (path) => {
+          // Skip if we're inside a FormattedMessage component
+          if (this.isInFormattedMessage(path)) return;
+
+          const didReplace = this.replaceJSXAttributeStrings(path, stringMap);
+          if (didReplace) needsUseIntlImport = true;
+        },
+
+        JSXExpressionContainer: (path) => {
+          // Skip if we're inside a FormattedMessage component
+          if (this.isInFormattedMessage(path)) return;
+
+          const didReplace = this.replaceExpressionStrings(path, stringMap);
+          if (didReplace) needsFormattedMessageImport = true;
+        },
+      });
+
+      // After traversal, add imports if necessary
+      traverse(ast, {
+        Program: (path) => {
+          this.ensureImports(
+            path,
+            needsFormattedMessageImport,
+            needsUseIntlImport
+          );
+        },
+      });
+    } catch (error: any) {
+      console.error(`Error during AST traversal: ${error.message}`);
+    }
 
     const output = generate(ast, { retainLines: true }, this.sourceCode);
 
     return output.code;
   }
 
-  private ensureImports(path: babelTraverse.NodePath<t.Program>) {
+  private ensureImports(
+    path: babelTraverse.NodePath<t.Program>,
+    needsFormattedMessageImport: boolean,
+    needsUseIntlImport: boolean
+  ) {
     const body = path.node.body;
 
-    const hasFormattedMessageImport = body.some(
-      (node) =>
-        t.isImportDeclaration(node) &&
-        node.source.value === 'react-intl' &&
-        node.specifiers.some(
-          (spec) =>
-            t.isImportSpecifier(spec) &&
-            t.isIdentifier(spec.imported, { name: 'FormattedMessage' })
-        )
+    // Find existing import declaration from 'react-intl'
+    const reactIntlImport = body.find(
+      (node): node is t.ImportDeclaration =>
+        t.isImportDeclaration(node) && node.source.value === 'react-intl'
     );
 
-    const hasUseIntlImport = body.some(
-      (node) =>
-        t.isImportDeclaration(node) &&
-        node.source.value === 'react-intl' &&
-        node.specifiers.some(
-          (spec) =>
-            t.isImportSpecifier(spec) &&
-            t.isIdentifier(spec.imported, { name: 'useIntl' })
-        )
-    );
+    if (reactIntlImport) {
+      // Collect existing imported specifiers
+      const existingSpecifiers = new Set<string>();
+      reactIntlImport.specifiers.forEach((spec) => {
+        if (t.isImportSpecifier(spec) && t.isIdentifier(spec.imported)) {
+          existingSpecifiers.add(spec.imported.name);
+        }
+      });
 
-    if (!hasFormattedMessageImport) {
-      const importDeclaration = t.importDeclaration(
-        [
+      // Add missing specifiers
+      const newSpecifiers: t.ImportSpecifier[] = [];
+
+      if (
+        needsFormattedMessageImport &&
+        !existingSpecifiers.has('FormattedMessage')
+      ) {
+        newSpecifiers.push(
           t.importSpecifier(
             t.identifier('FormattedMessage'),
             t.identifier('FormattedMessage')
-          ),
-        ],
-        t.stringLiteral('react-intl')
-      );
-      path.unshiftContainer('body', importDeclaration);
-    }
+          )
+        );
+      }
 
-    if (!hasUseIntlImport) {
-      const importDeclaration = t.importDeclaration(
-        [t.importSpecifier(t.identifier('useIntl'), t.identifier('useIntl'))],
-        t.stringLiteral('react-intl')
-      );
-      path.unshiftContainer('body', importDeclaration);
+      if (needsUseIntlImport && !existingSpecifiers.has('useIntl')) {
+        newSpecifiers.push(
+          t.importSpecifier(t.identifier('useIntl'), t.identifier('useIntl'))
+        );
+      }
+
+      reactIntlImport.specifiers.push(...newSpecifiers);
+    } else {
+      // No existing import, create a new one
+      const specifiers: t.ImportSpecifier[] = [];
+
+      if (needsFormattedMessageImport) {
+        specifiers.push(
+          t.importSpecifier(
+            t.identifier('FormattedMessage'),
+            t.identifier('FormattedMessage')
+          )
+        );
+      }
+
+      if (needsUseIntlImport) {
+        specifiers.push(
+          t.importSpecifier(t.identifier('useIntl'), t.identifier('useIntl'))
+        );
+      }
+
+      if (specifiers.length > 0) {
+        const importDeclaration = t.importDeclaration(
+          specifiers,
+          t.stringLiteral('react-intl')
+        );
+        path.unshiftContainer('body', importDeclaration);
+      }
     }
   }
 
   private injectUseIntlHook(
-    path: babelTraverse.NodePath<t.FunctionDeclaration | t.VariableDeclarator>
-  ) {
+    path: babelTraverse.NodePath<t.FunctionDeclaration | t.VariableDeclarator>,
+    componentName: string
+  ): boolean {
     let body: t.BlockStatement | null = null;
+    let functionNode:
+      | t.FunctionDeclaration
+      | t.FunctionExpression
+      | t.ArrowFunctionExpression
+      | null = null;
 
     if (t.isFunctionDeclaration(path.node)) {
+      functionNode = path.node;
       body = path.node.body;
     } else if (
       t.isVariableDeclarator(path.node) &&
       (t.isArrowFunctionExpression(path.node.init) ||
         t.isFunctionExpression(path.node.init))
     ) {
-      const func = path.node.init as
+      functionNode = path.node.init as
         | t.FunctionExpression
         | t.ArrowFunctionExpression;
-
-      if (t.isBlockStatement(func.body)) {
-        body = func.body;
-      } else {
-        func.body = t.blockStatement([
-          t.returnStatement(func.body as t.Expression),
-        ]);
-        body = func.body;
-      }
+      body = functionNode.body as t.BlockStatement;
     }
 
-    if (body) {
+    if (body && t.isBlockStatement(body) && functionNode) {
       const hasUseIntl = body.body.some(
         (node) =>
           t.isVariableDeclaration(node) &&
@@ -160,21 +226,25 @@ export class ReactIntlUpdater extends BaseUpdater {
           ),
         ]);
         body.body.unshift(intlDeclaration);
+        return true; // Indicate that we injected useIntl
       }
     }
+    return false;
   }
 
   private replaceJSXElementStrings(
     path: babelTraverse.NodePath<t.JSXElement>,
     stringMap: Map<string, StringInfo>
-  ) {
-    path.node.children = path.node.children.map((child) => {
-      if (t.isJSXText(child)) {
-        const textValue = child.value.trim();
+  ): boolean {
+    let didReplace = false;
+
+    path.get('children').forEach((childPath) => {
+      if (childPath.isJSXText()) {
+        const textValue = childPath.node.value.trim();
         if (stringMap.has(textValue)) {
           const strInfo = stringMap.get(textValue)!;
 
-          return t.jsxElement(
+          const formattedMessageElement = t.jsxElement(
             t.jsxOpeningElement(
               t.jsxIdentifier('FormattedMessage'),
               [
@@ -182,10 +252,7 @@ export class ReactIntlUpdater extends BaseUpdater {
                   t.jsxIdentifier('id'),
                   t.stringLiteral(strInfo.identifier)
                 ),
-                t.jsxAttribute(
-                  t.jsxIdentifier('defaultMessage'),
-                  t.stringLiteral(strInfo.string)
-                ),
+                // Omit defaultMessage if not needed
               ],
               true
             ),
@@ -193,16 +260,24 @@ export class ReactIntlUpdater extends BaseUpdater {
             [],
             true
           );
+
+          childPath.replaceWith(formattedMessageElement);
+
+          // Skip traversal into the new node
+          childPath.skip();
+
+          didReplace = true;
         }
       }
-      return child;
     });
+
+    return didReplace;
   }
 
   private replaceJSXAttributeStrings(
     path: babelTraverse.NodePath<t.JSXAttribute>,
     stringMap: Map<string, StringInfo>
-  ) {
+  ): boolean {
     const attrName = path.node.name.name;
     const attrValue = path.node.value;
 
@@ -230,23 +305,24 @@ export class ReactIntlUpdater extends BaseUpdater {
                 t.identifier('id'),
                 t.stringLiteral(strInfo.identifier)
               ),
-              t.objectProperty(
-                t.identifier('defaultMessage'),
-                t.stringLiteral(strInfo.string)
-              ),
+              // Omit defaultMessage if not needed
             ]),
           ]
         );
 
         path.node.value = t.jsxExpressionContainer(formatMessageCall);
+
+        return true; // Indicate that we made a replacement
       }
     }
+
+    return false;
   }
 
   private replaceExpressionStrings(
     path: babelTraverse.NodePath<t.JSXExpressionContainer>,
     stringMap: Map<string, StringInfo>
-  ) {
+  ): boolean {
     const expression = path.node.expression;
 
     if (t.isStringLiteral(expression)) {
@@ -255,27 +331,71 @@ export class ReactIntlUpdater extends BaseUpdater {
       if (stringMap.has(textValue)) {
         const strInfo = stringMap.get(textValue)!;
 
-        const formatMessageCall = t.callExpression(
-          t.memberExpression(
-            t.identifier('intl'),
-            t.identifier('formatMessage')
-          ),
-          [
-            t.objectExpression([
-              t.objectProperty(
-                t.identifier('id'),
-                t.stringLiteral(strInfo.identifier)
-              ),
-              t.objectProperty(
-                t.identifier('defaultMessage'),
-                t.stringLiteral(strInfo.string)
-              ),
-            ]),
-          ]
-        );
+        // Determine the context in which the JSXExpressionContainer is used
+        const parentPath = path.parentPath;
 
-        path.replaceWith(t.jsxExpressionContainer(formatMessageCall));
+        if (parentPath.isJSXElement() || parentPath.isJSXFragment()) {
+          // If it's used as a child, replace with <FormattedMessage />
+          const formattedMessageElement = t.jsxElement(
+            t.jsxOpeningElement(
+              t.jsxIdentifier('FormattedMessage'),
+              [
+                t.jsxAttribute(
+                  t.jsxIdentifier('id'),
+                  t.stringLiteral(strInfo.identifier)
+                ),
+                // Omit defaultMessage if not needed
+              ],
+              true
+            ),
+            null,
+            [],
+            true
+          );
+
+          path.replaceWith(formattedMessageElement);
+
+          // Skip traversal into the new node
+          path.skip();
+
+          return true; // Indicate that we made a replacement
+        } else {
+          // Otherwise, use intl.formatMessage
+          const formatMessageCall = t.callExpression(
+            t.memberExpression(
+              t.identifier('intl'),
+              t.identifier('formatMessage')
+            ),
+            [
+              t.objectExpression([
+                t.objectProperty(
+                  t.identifier('id'),
+                  t.stringLiteral(strInfo.identifier)
+                ),
+                // Omit defaultMessage if not needed
+              ]),
+            ]
+          );
+
+          path.replaceWith(t.jsxExpressionContainer(formatMessageCall));
+
+          return true; // Indicate that we made a replacement
+        }
       }
     }
+
+    return false;
+  }
+
+  private isInFormattedMessage(path: babelTraverse.NodePath): boolean {
+    return path.findParent(
+      (p) =>
+        p.isJSXElement() &&
+        t.isJSXIdentifier(p.node.openingElement.name, {
+          name: 'FormattedMessage',
+        })
+    )
+      ? true
+      : false;
   }
 }

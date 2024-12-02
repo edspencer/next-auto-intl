@@ -2,11 +2,11 @@ import path from 'path';
 import fs from 'fs';
 import { execSync } from 'child_process';
 
-import { NextIntlUpdater } from '../../src/next-intl/updater';
+import { ReactIntlUpdater } from '../../src/react-intl/updater';
 import { ComponentStrings } from '../../src/types';
 
 function updateSource(sourceCode: string, strings: ComponentStrings): string {
-  const updater = new NextIntlUpdater(sourceCode, strings.strings);
+  const updater = new ReactIntlUpdater(sourceCode, strings.strings);
   return updater.updateSource();
 }
 
@@ -19,7 +19,7 @@ const registerComponentStrings: ComponentStrings = {
         __dirname,
         '..',
         'fixtures',
-        'next-intl',
+        'react-intl',
         'RegisterPage.tsx'
       ),
       componentName: 'RegisterPage',
@@ -31,7 +31,7 @@ const registerComponentStrings: ComponentStrings = {
         __dirname,
         '..',
         'fixtures',
-        'next-intl',
+        'react-intl',
         'RegisterPage.tsx'
       ),
       componentName: 'RegisterPage',
@@ -43,7 +43,7 @@ const registerComponentStrings: ComponentStrings = {
         __dirname,
         '..',
         'fixtures',
-        'next-intl',
+        'react-intl',
         'RegisterPage.tsx'
       ),
       componentName: 'RegisterPage',
@@ -55,7 +55,7 @@ const registerComponentStrings: ComponentStrings = {
         __dirname,
         '..',
         'fixtures',
-        'next-intl',
+        'react-intl',
         'RegisterPage.tsx'
       ),
       componentName: 'RegisterPage',
@@ -67,7 +67,7 @@ const registerComponentStrings: ComponentStrings = {
         __dirname,
         '..',
         'fixtures',
-        'next-intl',
+        'react-intl',
         'RegisterPage.tsx'
       ),
       componentName: 'RegisterPage',
@@ -79,7 +79,7 @@ const registerComponentStrings: ComponentStrings = {
         __dirname,
         '..',
         'fixtures',
-        'next-intl',
+        'react-intl',
         'RegisterPage.tsx'
       ),
       componentName: 'RegisterPage',
@@ -94,13 +94,13 @@ const itemsComponentStrings: ComponentStrings = {
   file: '',
   strings: [
     {
-      file: '/Users/ed/Code/next-auto-intl/test/fixtures/next-intl/Items.tsx',
+      file: '/Users/ed/Code/next-auto-intl/test/fixtures/react-intl/Items.tsx',
       componentName: 'Items',
       string: 'Loading...',
       identifier: 'loading',
     },
     {
-      file: '/Users/ed/Code/next-auto-intl/test/fixtures/next-intl/Items.tsx',
+      file: '/Users/ed/Code/next-auto-intl/test/fixtures/react-intl/Items.tsx',
       componentName: 'Items',
       string: 'Items',
       identifier: 'items',
@@ -114,7 +114,7 @@ describe('updateSourceFile', () => {
       __dirname,
       '..',
       'fixtures',
-      'next-intl',
+      'react-intl',
       'RegisterPage.Transformed.tsx'
     );
 
@@ -129,7 +129,7 @@ describe('updateSourceFile', () => {
       __dirname,
       '..',
       'fixtures',
-      'next-intl',
+      'react-intl',
       'RegisterPage.Transformed.tsx'
     );
 
@@ -151,7 +151,7 @@ describe('updateSourceFile', () => {
       __dirname,
       '..',
       'fixtures',
-      'next-intl',
+      'react-intl',
       'PartiallyUpdated.Transformed.tsx'
     );
 
@@ -168,7 +168,7 @@ describe('updateSourceFile', () => {
       __dirname,
       '..',
       'fixtures',
-      'next-intl',
+      'react-intl',
       'Items.Transformed.tsx'
     );
 
@@ -189,7 +189,7 @@ function transformPage(
     __dirname,
     '..',
     'fixtures',
-    'next-intl',
+    'react-intl',
     fileName
   );
 
