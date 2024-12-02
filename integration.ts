@@ -132,7 +132,12 @@ async function checkUpdatedFiles(appName: string, tempDir: string) {
   );
 }
 
-runIntegrationTests().catch((error) => {
-  console.error(chalk.red('Integration tests failed:'), error);
-  process.exit(1);
-});
+runIntegrationTests()
+  .then(() => {
+    console.log(chalk.green('Integration tests passed!'));
+    process.exit(0);
+  })
+  .catch((error) => {
+    console.error(chalk.red('Integration tests failed:'), error);
+    process.exit(1);
+  });
