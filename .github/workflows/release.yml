@@ -70,8 +70,6 @@ jobs:
         run: pnpm build
 
       - name: Run Integration Tests
-        env:
-          OPENAI_API_KEY: nope
         run: pnpm run integration-test
 
   release:
