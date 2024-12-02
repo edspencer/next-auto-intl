@@ -6,3 +6,5 @@
 [] Let most of the functions like translateComponent be overridable in Configuration object, but default to next-auto-intl's implementation. Allows dev to override any part of the logic
 [] Support ternary operators inside JSX (e.g. {isLoading ? "Loading..." : "Loaded"}) should extract 2 strings
 [] winston logger
+[] error handling for parsing invalid JS/TS/JSX/TSX files
+[] error handling/surface/retry to broken calls to LLMs

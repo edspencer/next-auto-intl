@@ -1,8 +1,8 @@
 import React from 'react';
-import { useTranslations } from 'next-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 export const ComprehensiveTestComponent = () => {
-  const t = useTranslations('ComprehensiveTestComponent');
+  const intl = useIntl();
   const dynamicValue = 'Dynamic String'; // For non-static test cases
 
   return (
@@ -51,7 +51,9 @@ export const ComprehensiveTestComponent = () => {
       </a>
 
       {/* Already-translated strings */}
-      <p title={t('already-translated-title')}>{t('welcome-to-myapp')} </p>
+      <p title={intl.formatMessage({ id: 'already-translated-title' })}>
+        <FormattedMessage id="welcome-to-myapp" />{' '}
+      </p>
     </div>
   );
 };

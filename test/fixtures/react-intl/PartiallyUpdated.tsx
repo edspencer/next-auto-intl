@@ -4,7 +4,7 @@
  * This component has been next-intl'd before, but new strings have been added,
  * so we can test that we handle those properly.
  */
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useActionState, useEffect, useState } from 'react';
@@ -13,7 +13,7 @@ import { AuthForm } from '@/components/custom/auth-form';
 import { SubmitButton } from '@/components/custom/submit-button';
 import { register, RegisterActionState } from '../actions';
 export default function RegisterPage() {
-  const t = useTranslations('RegisterPage');
+  const intl = useIntl();
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [state, formAction] = useActionState<RegisterActionState, FormData>(
