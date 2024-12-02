@@ -1,4 +1,5 @@
 import { NextIntlLibrary } from '../next-intl';
+import { ReactIntlTargetLibrary } from '../react-intl';
 import { Configuration, ConfigurationOptions, TargetLibrary } from '../types';
 import { lintCommand } from './componentTools';
 
@@ -15,6 +16,9 @@ export function createConfiguration(
     switch (targetLibrary) {
       case 'next-intl':
         resolvedTargetLibrary = NextIntlLibrary;
+        break;
+      case 'react-intl':
+        resolvedTargetLibrary = ReactIntlTargetLibrary;
         break;
       default:
         throw new Error(`Unsupported target library: ${targetLibrary}`);

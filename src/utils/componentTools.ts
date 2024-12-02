@@ -5,7 +5,6 @@ import { promisify } from 'util';
 
 import {
   translateStrings,
-  saveTranslations,
   loadTranslations,
   getMissingKeys,
 } from './translationTools';
@@ -78,7 +77,7 @@ export async function translateComponent(
 
       console.log(translated);
 
-      saveTranslations(translated, targetLanguage, config);
+      config.targetLibrary.saveTranslations(translated, targetLanguage, config);
     }
   }
 }

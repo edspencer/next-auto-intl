@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { saveTranslations } from '../src/utils/translationTools';
-import { createConfiguration } from '../src/utils/configurationTools';
+import { createConfiguration } from '../../src/utils/configurationTools';
 
 jest.mock('fs');
 const mockedFs = jest.mocked(fs);
@@ -33,7 +32,7 @@ describe('saveTranslations', () => {
       Component1: { key1: 'value1' },
     };
 
-    saveTranslations(messages, locale, config);
+    config.targetLibrary.saveTranslations(messages, locale, config);
 
     expect(mockedFs.writeFileSync).toHaveBeenCalledWith(
       localeFile,
@@ -54,7 +53,7 @@ describe('saveTranslations', () => {
       Component3: { key4: 'value4' },
     };
 
-    saveTranslations(newMessages, locale, config);
+    config.targetLibrary.saveTranslations(newMessages, locale, config);
 
     const expectedMessages = {
       Component1: { key1: 'newValue1', key3: 'value3' },
@@ -75,7 +74,7 @@ describe('saveTranslations', () => {
       Component1: { key1: 'value1' },
     };
 
-    saveTranslations(newMessages, locale, config);
+    config.targetLibrary.saveTranslations(newMessages, locale, config);
 
     expect(mockedFs.writeFileSync).toHaveBeenCalledWith(
       localeFile,

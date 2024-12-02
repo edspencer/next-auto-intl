@@ -152,38 +152,6 @@ export function loadTranslations(
 }
 
 /**
- * Saves the translations to a JSON file.
- *
- * @param messages - A MessagesObject containing the translations to be saved.
- * @param locale - The locale code for the translations.
- * @param config - The configuration object containing the messages directory.
- */
-export function saveTranslations(
-  messages: MessagesObject,
-  locale: string,
-  config: Configuration
-) {
-  //load the existing messages
-  let existingMessages = {};
-
-  const localeFile = path.join(config.messagesDir!, `${locale}.json`);
-  console.log('loading existing translations from', localeFile);
-  try {
-    existingMessages = JSON.parse(fs.readFileSync(localeFile, 'utf8'));
-  } catch (e) {
-    console.log(`No existing messages found for locale ${locale}`);
-  }
-
-  //merge the new messages with the existing ones
-  const newMessages = deepmerge(existingMessages, messages);
-
-  console.log('saving translations to', localeFile);
-
-  //save the new messages
-  fs.writeFileSync(localeFile, JSON.stringify(newMessages, null, 2));
-}
-
-/**
  * Creates a MessagesObject from an array of StringInfo objects.
  *
  * @param strings - An array of StringInfo objects.

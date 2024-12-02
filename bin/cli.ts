@@ -12,7 +12,7 @@ import { doExtract, doTranslate, doRewrite, doAll } from '../src/utils/process';
 import { createConfiguration } from '../src/utils/configurationTools';
 
 program
-  .name('next-auto-intl')
+  .name('react-auto-intl')
   .description('AI-driven automatic internationalization for your Next.js app')
   .version('1.0.0');
 

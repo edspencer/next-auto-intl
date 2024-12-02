@@ -119,7 +119,7 @@ export type RewriteConfiguration = {
 };
 
 //the set of allowed target libraries by string name
-export type AllowedTargetLibraries = 'next-intl';
+export type AllowedTargetLibraries = 'next-intl' | 'react-intl';
 
 export type ConfigurationOptions = Partial<
   Omit<Configuration, 'targetLibrary'>
@@ -146,10 +146,10 @@ export interface TargetLibrary {
    */
   updateSource(sourceCode: string, strings: StringInfo[]): string;
 
-  writeTranslations?(
+  saveTranslations(
     messages: MessagesObject,
     locale: string,
-    messagesDir: string
+    config: Configuration
   ): void;
 }
 

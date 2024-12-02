@@ -1,5 +1,3 @@
-// libraries/nextIntlExtractor.ts
-
 import * as babelTraverse from '@babel/traverse';
 import * as t from '@babel/types';
 import { BaseExtractor } from '../extractor/baseExtractor';

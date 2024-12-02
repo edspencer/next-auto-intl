@@ -1,46 +1,98 @@
-import { StringInfo } from '../../src/types';
 import path from 'path';
 import { parseFile } from '../../src/utils/parser';
-
-import { NextIntlExtractor } from '../../src/next-intl/extractor';
+import { ReactIntlExtractor } from '../../src/react-intl/extractor';
+import { StringInfo, MessagesObject } from '../../src/types';
 
 const sortByIdentifier = (a: StringInfo, b: StringInfo) =>
   a.identifier < b.identifier ? -1 : 1;
 
+function getStrings(fileName: string, baseLanguageStrings?: MessagesObject) {
+  const filePath = path.resolve(
+    __dirname,
+    '..',
+    'fixtures',
+    'react-intl',
+    fileName
+  );
+  const ast = parseFile(filePath);
+  const extractor = new ReactIntlExtractor(
+    ast,
+    filePath,
+    baseLanguageStrings || {}
+  );
+  return extractor.extractStrings().sort(sortByIdentifier);
+}
+
 const expectedPricingStrings = [
   {
-    file: path.resolve(__dirname, '..', 'fixtures', 'next-intl', 'Pricing.tsx'),
+    file: path.resolve(
+      __dirname,
+      '..',
+      'fixtures',
+      'react-intl',
+      'Pricing.tsx'
+    ),
     componentName: 'Pricing',
     string: 'Pricing',
     identifier: 'pricing',
   },
   {
-    file: path.resolve(__dirname, '..', 'fixtures', 'next-intl', 'Pricing.tsx'),
+    file: path.resolve(
+      __dirname,
+      '..',
+      'fixtures',
+      'react-intl',
+      'Pricing.tsx'
+    ),
     componentName: 'Pricing',
     string: 'Free for most people, cheap for everyone else.',
     identifier: 'free-for-most-people-cheap',
   },
   {
-    file: path.resolve(__dirname, '..', 'fixtures', 'next-intl', 'Pricing.tsx'),
+    file: path.resolve(
+      __dirname,
+      '..',
+      'fixtures',
+      'react-intl',
+      'Pricing.tsx'
+    ),
     componentName: 'Pricing',
     string:
       'Track up to 100 items for free, or upgrade to a paid plan for more',
     identifier: 'track-up-to-100-items',
   },
   {
-    file: path.resolve(__dirname, '..', 'fixtures', 'next-intl', 'Pricing.tsx'),
+    file: path.resolve(
+      __dirname,
+      '..',
+      'fixtures',
+      'react-intl',
+      'Pricing.tsx'
+    ),
     componentName: 'Pricing',
     string: 'Most popular',
     identifier: 'most-popular',
   },
   {
-    file: path.resolve(__dirname, '..', 'fixtures', 'next-intl', 'Pricing.tsx'),
+    file: path.resolve(
+      __dirname,
+      '..',
+      'fixtures',
+      'react-intl',
+      'Pricing.tsx'
+    ),
     componentName: 'Pricing',
     string: '/month',
     identifier: 'month',
   },
   {
-    file: path.resolve(__dirname, '..', 'fixtures', 'next-intl', 'Pricing.tsx'),
+    file: path.resolve(
+      __dirname,
+      '..',
+      'fixtures',
+      'react-intl',
+      'Pricing.tsx'
+    ),
     componentName: 'Pricing',
     string: 'Choose plan',
     identifier: 'choose-plan',
@@ -53,7 +105,7 @@ const expectedRegisterPageStrings = [
       __dirname,
       '..',
       'fixtures',
-      'next-intl',
+      'react-intl',
       'RegisterPage.tsx'
     ),
     componentName: 'RegisterPage',
@@ -65,7 +117,7 @@ const expectedRegisterPageStrings = [
       __dirname,
       '..',
       'fixtures',
-      'next-intl',
+      'react-intl',
       'RegisterPage.tsx'
     ),
     componentName: 'RegisterPage',
@@ -77,7 +129,7 @@ const expectedRegisterPageStrings = [
       __dirname,
       '..',
       'fixtures',
-      'next-intl',
+      'react-intl',
       'RegisterPage.tsx'
     ),
     componentName: 'RegisterPage',
@@ -89,7 +141,7 @@ const expectedRegisterPageStrings = [
       __dirname,
       '..',
       'fixtures',
-      'next-intl',
+      'react-intl',
       'RegisterPage.tsx'
     ),
     componentName: 'RegisterPage',
@@ -101,7 +153,7 @@ const expectedRegisterPageStrings = [
       __dirname,
       '..',
       'fixtures',
-      'next-intl',
+      'react-intl',
       'RegisterPage.tsx'
     ),
     componentName: 'RegisterPage',
@@ -113,7 +165,7 @@ const expectedRegisterPageStrings = [
       __dirname,
       '..',
       'fixtures',
-      'next-intl',
+      'react-intl',
       'RegisterPage.tsx'
     ),
     componentName: 'RegisterPage',
@@ -124,20 +176,20 @@ const expectedRegisterPageStrings = [
 
 const expectedItemsStrings = [
   {
-    file: path.resolve(__dirname, '..', 'fixtures', 'next-intl', 'Items.tsx'),
+    file: path.resolve(__dirname, '..', 'fixtures', 'react-intl', 'Items.tsx'),
     componentName: 'Items',
     string: 'Loading...',
     identifier: 'loading',
   },
   {
-    file: path.resolve(__dirname, '..', 'fixtures', 'next-intl', 'Items.tsx'),
+    file: path.resolve(__dirname, '..', 'fixtures', 'react-intl', 'Items.tsx'),
     componentName: 'Items',
     string: 'Items',
     identifier: 'items',
   },
 ].sort(sortByIdentifier);
 
-describe('extractStrings', () => {
+describe('ReactIntlExtractor', () => {
   let pricingStrings: any;
   let registerPageStrings: any;
   let itemsStrings: any;
@@ -169,7 +221,7 @@ describe('extractStrings', () => {
           __dirname,
           '..',
           'fixtures',
-          'next-intl',
+          'react-intl',
           'PartiallyUpdated.tsx'
         ),
         componentName: 'RegisterPage',
@@ -182,7 +234,7 @@ describe('extractStrings', () => {
           __dirname,
           '..',
           'fixtures',
-          'next-intl',
+          'react-intl',
           'PartiallyUpdated.tsx'
         ),
         componentName: 'RegisterPage',
@@ -195,7 +247,7 @@ describe('extractStrings', () => {
           __dirname,
           '..',
           'fixtures',
-          'next-intl',
+          'react-intl',
           'PartiallyUpdated.tsx'
         ),
         componentName: 'RegisterPage',
@@ -208,7 +260,7 @@ describe('extractStrings', () => {
           __dirname,
           '..',
           'fixtures',
-          'next-intl',
+          'react-intl',
           'PartiallyUpdated.tsx'
         ),
         componentName: 'RegisterPage',
@@ -220,7 +272,7 @@ describe('extractStrings', () => {
           __dirname,
           '..',
           'fixtures',
-          'next-intl',
+          'react-intl',
           'PartiallyUpdated.tsx'
         ),
         componentName: 'RegisterPage',
@@ -233,7 +285,7 @@ describe('extractStrings', () => {
           __dirname,
           '..',
           'fixtures',
-          'next-intl',
+          'react-intl',
           'PartiallyUpdated.tsx'
         ),
         componentName: 'RegisterPage',
@@ -332,7 +384,7 @@ describe('extractStrings', () => {
             __dirname,
             '..',
             'fixtures',
-            'next-intl',
+            'react-intl',
             'comp-formats',
             'ArrowFunctionImplicitReturn.tsx'
           ),
@@ -361,7 +413,7 @@ describe('extractStrings', () => {
             __dirname,
             '..',
             'fixtures',
-            'next-intl',
+            'react-intl',
             'comp-formats',
             'StatelessFunctionalComponent.tsx'
           ),
@@ -388,7 +440,7 @@ describe('extractStrings', () => {
             __dirname,
             '..',
             'fixtures',
-            'next-intl',
+            'react-intl',
             'comp-formats',
             'FragmentWrapper.tsx'
           ),
@@ -401,7 +453,7 @@ describe('extractStrings', () => {
             __dirname,
             '..',
             'fixtures',
-            'next-intl',
+            'react-intl',
             'comp-formats',
             'FragmentWrapper.tsx'
           ),
@@ -428,7 +480,7 @@ describe('extractStrings', () => {
             __dirname,
             '..',
             'fixtures',
-            'next-intl',
+            'react-intl',
             'comp-formats',
             'ConditionalComponent.tsx'
           ),
@@ -441,7 +493,7 @@ describe('extractStrings', () => {
             __dirname,
             '..',
             'fixtures',
-            'next-intl',
+            'react-intl',
             'comp-formats',
             'ConditionalComponent.tsx'
           ),
@@ -453,60 +505,6 @@ describe('extractStrings', () => {
 
       expect(expected).toEqual(strings);
     });
-  });
-
-  it.failing('should extract strings from inline logical expressions', () => {
-    const strings = getStrings('comp-formats/InlineLogic.tsx', {
-      InlineLogic: {
-        'welcome-premium-user': 'Welcome, Premium User!',
-        'upgrade-to-premium': 'Upgrade to Premium',
-        'exclusive-feature': 'Exclusive Feature',
-      },
-    });
-
-    const expected = [
-      {
-        file: path.resolve(
-          __dirname,
-          '..',
-          'fixtures',
-          'next-intl',
-          'comp-formats',
-          'InlineLogic.tsx'
-        ),
-        componentName: 'InlineLogic',
-        string: 'Welcome, Premium User!',
-        identifier: 'welcome-premium-user',
-      },
-      {
-        file: path.resolve(
-          __dirname,
-          '..',
-          'fixtures',
-          'next-intl',
-          'comp-formats',
-          'InlineLogic.tsx'
-        ),
-        componentName: 'InlineLogic',
-        string: 'Upgrade to Premium',
-        identifier: 'upgrade-to-premim',
-      },
-      {
-        file: path.resolve(
-          __dirname,
-          '..',
-          'fixtures',
-          'next-intl',
-          'comp-formats',
-          'InlineLogic.tsx'
-        ),
-        componentName: 'InlineLogic',
-        string: 'Exclusive Feature',
-        identifier: 'exclusive-feature',
-      },
-    ];
-
-    expect(expected).toEqual(strings);
   });
 
   it('should extract strings from inline logical expressions', () => {
@@ -522,7 +520,7 @@ describe('extractStrings', () => {
           __dirname,
           '..',
           'fixtures',
-          'next-intl',
+          'react-intl',
           'comp-formats',
           'SelfClosing.tsx'
         ),
@@ -549,7 +547,7 @@ describe('extractStrings', () => {
           __dirname,
           '..',
           'fixtures',
-          'next-intl',
+          'react-intl',
           'comp-formats',
           'ParentComponent.tsx'
         ),
@@ -571,7 +569,7 @@ function expectedStringsForCompFile(filename: string) {
         __dirname,
         '..',
         'fixtures',
-        'next-intl',
+        'react-intl',
         'comp-formats',
         filename
       ),
@@ -674,11 +672,3 @@ const expectedStringsCompTest = [
     alreadyUpdated: true,
   },
 ];
-
-function getStrings(fileName: string, baseLanguageStrings?: any) {
-  const file = path.join(__dirname, '..', 'fixtures', 'next-intl', fileName);
-  const ast = parseFile(file);
-
-  const extractor = new NextIntlExtractor(ast, file, baseLanguageStrings);
-  return extractor.extractStrings().sort(sortByIdentifier);
-}
