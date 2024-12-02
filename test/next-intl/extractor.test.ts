@@ -9,38 +9,38 @@ const sortByIdentifier = (a: StringInfo, b: StringInfo) =>
 
 const expectedPricingStrings = [
   {
-    file: path.resolve(__dirname, '..', 'fixtures', 'Pricing.tsx'),
+    file: path.resolve(__dirname, '..', 'fixtures', 'next-intl', 'Pricing.tsx'),
     componentName: 'Pricing',
     string: 'Pricing',
     identifier: 'pricing',
   },
   {
-    file: path.resolve(__dirname, '..', 'fixtures', 'Pricing.tsx'),
+    file: path.resolve(__dirname, '..', 'fixtures', 'next-intl', 'Pricing.tsx'),
     componentName: 'Pricing',
     string: 'Free for most people, cheap for everyone else.',
     identifier: 'free-for-most-people-cheap',
   },
   {
-    file: path.resolve(__dirname, '..', 'fixtures', 'Pricing.tsx'),
+    file: path.resolve(__dirname, '..', 'fixtures', 'next-intl', 'Pricing.tsx'),
     componentName: 'Pricing',
     string:
       'Track up to 100 items for free, or upgrade to a paid plan for more',
     identifier: 'track-up-to-100-items',
   },
   {
-    file: path.resolve(__dirname, '..', 'fixtures', 'Pricing.tsx'),
+    file: path.resolve(__dirname, '..', 'fixtures', 'next-intl', 'Pricing.tsx'),
     componentName: 'Pricing',
     string: 'Most popular',
     identifier: 'most-popular',
   },
   {
-    file: path.resolve(__dirname, '..', 'fixtures', 'Pricing.tsx'),
+    file: path.resolve(__dirname, '..', 'fixtures', 'next-intl', 'Pricing.tsx'),
     componentName: 'Pricing',
     string: '/month',
     identifier: 'month',
   },
   {
-    file: path.resolve(__dirname, '..', 'fixtures', 'Pricing.tsx'),
+    file: path.resolve(__dirname, '..', 'fixtures', 'next-intl', 'Pricing.tsx'),
     componentName: 'Pricing',
     string: 'Choose plan',
     identifier: 'choose-plan',
@@ -49,37 +49,73 @@ const expectedPricingStrings = [
 
 const expectedRegisterPageStrings = [
   {
-    file: path.resolve(__dirname, '..', 'fixtures', 'RegisterPage.tsx'),
+    file: path.resolve(
+      __dirname,
+      '..',
+      'fixtures',
+      'next-intl',
+      'RegisterPage.tsx'
+    ),
     componentName: 'RegisterPage',
     string: 'Sign Up',
     identifier: 'sign-up',
   },
   {
-    file: path.resolve(__dirname, '..', 'fixtures', 'RegisterPage.tsx'),
+    file: path.resolve(
+      __dirname,
+      '..',
+      'fixtures',
+      'next-intl',
+      'RegisterPage.tsx'
+    ),
     componentName: 'RegisterPage',
     string: 'Create an account with your email and password',
     identifier: 'create-an-account-with-your',
   },
   {
-    file: path.resolve(__dirname, '..', 'fixtures', 'RegisterPage.tsx'),
+    file: path.resolve(
+      __dirname,
+      '..',
+      'fixtures',
+      'next-intl',
+      'RegisterPage.tsx'
+    ),
     componentName: 'RegisterPage',
     string: 'Sign Up',
     identifier: 'sign-up',
   },
   {
-    file: path.resolve(__dirname, '..', 'fixtures', 'RegisterPage.tsx'),
+    file: path.resolve(
+      __dirname,
+      '..',
+      'fixtures',
+      'next-intl',
+      'RegisterPage.tsx'
+    ),
     componentName: 'RegisterPage',
     string: 'Already have an account?',
     identifier: 'already-have-an-account',
   },
   {
-    file: path.resolve(__dirname, '..', 'fixtures', 'RegisterPage.tsx'),
+    file: path.resolve(
+      __dirname,
+      '..',
+      'fixtures',
+      'next-intl',
+      'RegisterPage.tsx'
+    ),
     componentName: 'RegisterPage',
     string: 'Sign in',
     identifier: 'sign-in',
   },
   {
-    file: path.resolve(__dirname, '..', 'fixtures', 'RegisterPage.tsx'),
+    file: path.resolve(
+      __dirname,
+      '..',
+      'fixtures',
+      'next-intl',
+      'RegisterPage.tsx'
+    ),
     componentName: 'RegisterPage',
     string: 'instead.',
     identifier: 'instead',
@@ -88,13 +124,13 @@ const expectedRegisterPageStrings = [
 
 const expectedItemsStrings = [
   {
-    file: path.resolve(__dirname, '..', 'fixtures', 'Items.tsx'),
+    file: path.resolve(__dirname, '..', 'fixtures', 'next-intl', 'Items.tsx'),
     componentName: 'Items',
     string: 'Loading...',
     identifier: 'loading',
   },
   {
-    file: path.resolve(__dirname, '..', 'fixtures', 'Items.tsx'),
+    file: path.resolve(__dirname, '..', 'fixtures', 'next-intl', 'Items.tsx'),
     componentName: 'Items',
     string: 'Items',
     identifier: 'items',
@@ -129,41 +165,77 @@ describe('extractStrings', () => {
   it('should extract strings for a component that has already been partly internationalized', () => {
     const newStrings = [
       {
-        file: path.resolve(__dirname, '..', 'fixtures', 'PartiallyUpdated.tsx'),
+        file: path.resolve(
+          __dirname,
+          '..',
+          'fixtures',
+          'next-intl',
+          'PartiallyUpdated.tsx'
+        ),
         componentName: 'RegisterPage',
         string: 'Sign Up',
         identifier: 'sign-up',
         alreadyUpdated: true,
       },
       {
-        file: path.resolve(__dirname, '..', 'fixtures', 'PartiallyUpdated.tsx'),
+        file: path.resolve(
+          __dirname,
+          '..',
+          'fixtures',
+          'next-intl',
+          'PartiallyUpdated.tsx'
+        ),
         componentName: 'RegisterPage',
         string: 'Create an account with your email and password',
         identifier: 'create-an-account-with-your',
         alreadyUpdated: true,
       },
       {
-        file: path.resolve(__dirname, '..', 'fixtures', 'PartiallyUpdated.tsx'),
+        file: path.resolve(
+          __dirname,
+          '..',
+          'fixtures',
+          'next-intl',
+          'PartiallyUpdated.tsx'
+        ),
         componentName: 'RegisterPage',
         string: 'Sign Up',
         identifier: 'sign-up',
         alreadyUpdated: true,
       },
       {
-        file: path.resolve(__dirname, '..', 'fixtures', 'PartiallyUpdated.tsx'),
+        file: path.resolve(
+          __dirname,
+          '..',
+          'fixtures',
+          'next-intl',
+          'PartiallyUpdated.tsx'
+        ),
         componentName: 'RegisterPage',
         string: 'Already have an account?',
         identifier: 'already-have-an-account',
       },
       {
-        file: path.resolve(__dirname, '..', 'fixtures', 'PartiallyUpdated.tsx'),
+        file: path.resolve(
+          __dirname,
+          '..',
+          'fixtures',
+          'next-intl',
+          'PartiallyUpdated.tsx'
+        ),
         componentName: 'RegisterPage',
         string: 'Sign in',
         identifier: 'sign-in',
         alreadyUpdated: true,
       },
       {
-        file: path.resolve(__dirname, '..', 'fixtures', 'PartiallyUpdated.tsx'),
+        file: path.resolve(
+          __dirname,
+          '..',
+          'fixtures',
+          'next-intl',
+          'PartiallyUpdated.tsx'
+        ),
         componentName: 'RegisterPage',
         string: 'instead.',
         identifier: 'instead',
@@ -260,6 +332,7 @@ describe('extractStrings', () => {
             __dirname,
             '..',
             'fixtures',
+            'next-intl',
             'comp-formats',
             'ArrowFunctionImplicitReturn.tsx'
           ),
@@ -288,6 +361,7 @@ describe('extractStrings', () => {
             __dirname,
             '..',
             'fixtures',
+            'next-intl',
             'comp-formats',
             'StatelessFunctionalComponent.tsx'
           ),
@@ -314,6 +388,7 @@ describe('extractStrings', () => {
             __dirname,
             '..',
             'fixtures',
+            'next-intl',
             'comp-formats',
             'FragmentWrapper.tsx'
           ),
@@ -326,6 +401,7 @@ describe('extractStrings', () => {
             __dirname,
             '..',
             'fixtures',
+            'next-intl',
             'comp-formats',
             'FragmentWrapper.tsx'
           ),
@@ -352,6 +428,7 @@ describe('extractStrings', () => {
             __dirname,
             '..',
             'fixtures',
+            'next-intl',
             'comp-formats',
             'ConditionalComponent.tsx'
           ),
@@ -364,6 +441,7 @@ describe('extractStrings', () => {
             __dirname,
             '..',
             'fixtures',
+            'next-intl',
             'comp-formats',
             'ConditionalComponent.tsx'
           ),
@@ -392,6 +470,7 @@ describe('extractStrings', () => {
           __dirname,
           '..',
           'fixtures',
+          'next-intl',
           'comp-formats',
           'InlineLogic.tsx'
         ),
@@ -404,6 +483,7 @@ describe('extractStrings', () => {
           __dirname,
           '..',
           'fixtures',
+          'next-intl',
           'comp-formats',
           'InlineLogic.tsx'
         ),
@@ -416,6 +496,7 @@ describe('extractStrings', () => {
           __dirname,
           '..',
           'fixtures',
+          'next-intl',
           'comp-formats',
           'InlineLogic.tsx'
         ),
@@ -441,6 +522,7 @@ describe('extractStrings', () => {
           __dirname,
           '..',
           'fixtures',
+          'next-intl',
           'comp-formats',
           'SelfClosing.tsx'
         ),
@@ -467,6 +549,7 @@ describe('extractStrings', () => {
           __dirname,
           '..',
           'fixtures',
+          'next-intl',
           'comp-formats',
           'ParentComponent.tsx'
         ),
@@ -484,7 +567,14 @@ function expectedStringsForCompFile(filename: string) {
   return expectedStringsCompTest
     .map((string) => ({
       ...string,
-      file: path.resolve(__dirname, '..', 'fixtures', 'comp-formats', filename),
+      file: path.resolve(
+        __dirname,
+        '..',
+        'fixtures',
+        'next-intl',
+        'comp-formats',
+        filename
+      ),
     }))
     .sort(sortByIdentifier);
 }
@@ -586,7 +676,7 @@ const expectedStringsCompTest = [
 ];
 
 function getStrings(fileName: string, baseLanguageStrings?: any) {
-  const file = path.join(__dirname, '..', 'fixtures', fileName);
+  const file = path.join(__dirname, '..', 'fixtures', 'next-intl', fileName);
   const ast = parseFile(file);
 
   const extractor = new NextIntlExtractor(ast, file, baseLanguageStrings);

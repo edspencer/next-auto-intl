@@ -15,37 +15,73 @@ const registerComponentStrings: ComponentStrings = {
   file: '',
   strings: [
     {
-      file: path.resolve(__dirname, '..', 'fixtures', 'RegisterPage.tsx'),
+      file: path.resolve(
+        __dirname,
+        '..',
+        'fixtures',
+        'next-intl',
+        'RegisterPage.tsx'
+      ),
       componentName: 'RegisterPage',
       string: 'Sign Up',
       identifier: 'sign-up',
     },
     {
-      file: path.resolve(__dirname, '..', 'fixtures', 'RegisterPage.tsx'),
+      file: path.resolve(
+        __dirname,
+        '..',
+        'fixtures',
+        'next-intl',
+        'RegisterPage.tsx'
+      ),
       componentName: 'RegisterPage',
       string: 'Create an account with your email and password',
       identifier: 'create-an-account-with-your',
     },
     {
-      file: path.resolve(__dirname, '..', 'fixtures', 'RegisterPage.tsx'),
+      file: path.resolve(
+        __dirname,
+        '..',
+        'fixtures',
+        'next-intl',
+        'RegisterPage.tsx'
+      ),
       componentName: 'RegisterPage',
       string: 'Sign Up',
       identifier: 'sign-up',
     },
     {
-      file: path.resolve(__dirname, '..', 'fixtures', 'RegisterPage.tsx'),
+      file: path.resolve(
+        __dirname,
+        '..',
+        'fixtures',
+        'next-intl',
+        'RegisterPage.tsx'
+      ),
       componentName: 'RegisterPage',
       string: 'Already have an account?',
       identifier: 'already-have-an-account',
     },
     {
-      file: path.resolve(__dirname, '..', 'fixtures', 'RegisterPage.tsx'),
+      file: path.resolve(
+        __dirname,
+        '..',
+        'fixtures',
+        'next-intl',
+        'RegisterPage.tsx'
+      ),
       componentName: 'RegisterPage',
       string: 'Sign in',
       identifier: 'sign-in',
     },
     {
-      file: path.resolve(__dirname, '..', 'fixtures', 'RegisterPage.tsx'),
+      file: path.resolve(
+        __dirname,
+        '..',
+        'fixtures',
+        'next-intl',
+        'RegisterPage.tsx'
+      ),
       componentName: 'RegisterPage',
       string: 'instead.',
       identifier: 'instead',
@@ -58,13 +94,13 @@ const itemsComponentStrings: ComponentStrings = {
   file: '',
   strings: [
     {
-      file: '/Users/ed/Code/next-auto-intl/test/fixtures/Items.tsx',
+      file: '/Users/ed/Code/next-auto-intl/test/fixtures/next-intl/Items.tsx',
       componentName: 'Items',
       string: 'Loading...',
       identifier: 'loading',
     },
     {
-      file: '/Users/ed/Code/next-auto-intl/test/fixtures/Items.tsx',
+      file: '/Users/ed/Code/next-auto-intl/test/fixtures/next-intl/Items.tsx',
       componentName: 'Items',
       string: 'Items',
       identifier: 'items',
@@ -78,6 +114,7 @@ describe('updateSourceFile', () => {
       __dirname,
       '..',
       'fixtures',
+      'next-intl',
       'RegisterPage.Transformed.tsx'
     );
 
@@ -92,6 +129,7 @@ describe('updateSourceFile', () => {
       __dirname,
       '..',
       'fixtures',
+      'next-intl',
       'RegisterPage.Transformed.tsx'
     );
 
@@ -113,6 +151,7 @@ describe('updateSourceFile', () => {
       __dirname,
       '..',
       'fixtures',
+      'next-intl',
       'PartiallyUpdated.Transformed.tsx'
     );
 
@@ -129,6 +168,7 @@ describe('updateSourceFile', () => {
       __dirname,
       '..',
       'fixtures',
+      'next-intl',
       'Items.Transformed.tsx'
     );
 
@@ -148,7 +188,13 @@ function transformPage(
   fileName: string = 'RegisterPage.tsx',
   componentStrings = registerComponentStrings
 ): string {
-  const inputFile = path.resolve(__dirname, '..', 'fixtures', fileName);
+  const inputFile = path.resolve(
+    __dirname,
+    '..',
+    'fixtures',
+    'next-intl',
+    fileName
+  );
 
   const inputCode = fs.readFileSync(inputFile, 'utf-8');
 

@@ -6,7 +6,7 @@ import { StringInfo, MessagesObject } from '../types';
 let traverse = babelTraverse.default || babelTraverse;
 traverse = (traverse as any).default || traverse;
 
-export class NextIntlExtractor extends BaseExtractor {
+export class ReactIntlExtractor extends BaseExtractor {
   extractStrings(): StringInfo[] {
     const strings: StringInfo[] = [];
     this.collectComponentScopes();
@@ -22,29 +22,7 @@ export class NextIntlExtractor extends BaseExtractor {
             // Skip visited nodes
             if (visitedNodes.has(textPath.node)) return;
 
-            const parent = textPath.parent;
-
-            // Ensure the parent is a JSXElement
-            if (!t.isJSXElement(parent)) return;
-
-            // Determine if the text node is the only child of its parent
-            const isOnlyChild =
-              parent.children.filter((child) => t.isJSXText(child)).length ===
-              1;
-
-            // Normalize the text value
-            let textValue = textPath.node.value;
-            if (isOnlyChild) {
-              // If it's the only child, trim all whitespace
-              textValue = textValue.trim();
-            } else {
-              // Otherwise, normalize spaces to preserve single leading/trailing spaces
-              textValue = textValue
-                .replace(/^\s+/, ' ')
-                .replace(/\s+$/, ' ')
-                .trimStart() // Handle excessive leading whitespace
-                .trimEnd(); // Handle excessive trailing whitespace
-            }
+            const textValue = textPath.node.value.trim();
 
             // Ensure the string contains at least one alphabetic character
             if (textValue && /[a-zA-Z]/.test(textValue)) {
@@ -132,18 +110,15 @@ export class NextIntlExtractor extends BaseExtractor {
             } else if (t.isTemplateLiteral(expression)) {
               // Handle template literals like {`template string`}
               expression.quasis.forEach((quasi) => {
-                const rawText = quasi.value.raw;
+                const rawText = quasi.value.raw.trim();
 
-                // Normalize spaces and check for alphabetic characters
-                const textValue = rawText
-                  .replace(/^\s+/, ' ')
-                  .replace(/\s+$/, ' ');
-
-                if (textValue && /[a-zA-Z]/.test(textValue)) {
+                if (rawText && /[a-zA-Z]/.test(rawText)) {
                   const stringInfo = this.createStringInfo(
                     componentName,
-                    textValue,
-                    { isExpression: true }
+                    rawText,
+                    {
+                      isExpression: true,
+                    }
                   );
                   strings.push(stringInfo);
                 }
@@ -152,32 +127,6 @@ export class NextIntlExtractor extends BaseExtractor {
               // Mark the node and its expression as visited
               visitedNodes.add(exprPath.node);
               visitedNodes.add(expression);
-            } else if (
-              t.isCallExpression(expression) &&
-              t.isIdentifier(expression.callee) &&
-              expression.callee.name === 't' &&
-              expression.arguments.length === 1 &&
-              t.isStringLiteral(expression.arguments[0])
-            ) {
-              // Handle {t('someStringId')}
-              const identifier = expression.arguments[0].value;
-              const existingComponentTranslations =
-                this.baseLanguageStrings[componentName] || {};
-              const originalText = existingComponentTranslations[identifier];
-
-              if (originalText) {
-                strings.push({
-                  file: this.filePath,
-                  componentName,
-                  string: originalText,
-                  identifier,
-                  alreadyUpdated: true,
-                });
-
-                // Mark the node and its expression as visited
-                visitedNodes.add(exprPath.node);
-                visitedNodes.add(expression);
-              }
             }
           },
         });
