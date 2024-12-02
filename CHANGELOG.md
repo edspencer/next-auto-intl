@@ -1,5 +1,16 @@
 # react-auto-intl
 
+## 0.5.0
+
+### Minor Changes
+
+- d1b4a90: Change name to react-auto-intl
+- d1b4a90: Added react-intl support
+
+### Patch Changes
+
+- d1b4a90: Refactored saveTranslations to make them per-targetLibrary
+
 ## 0.4.0
 
 ### Minor Changes
