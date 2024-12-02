@@ -70,15 +70,15 @@ async function testApplication(appName: string) {
   );
   const targetConfigPath = path.join(tempDir, 'i18n', 'auto-intl.config.js');
 
-  console.log('Copying prepared auto-intl.config.js...');
-  await fs.copy(preparedConfigPath, targetConfigPath, { overwrite: true });
-
   // Assert that the config file exists
   console.log('Checking that auto-intl.config.js exists...');
   assert.ok(
     await fs.pathExists(targetConfigPath),
     'auto-intl.config.js does not exist'
   );
+
+  console.log('Copying prepared auto-intl.config.js...');
+  await fs.copy(preparedConfigPath, targetConfigPath, { overwrite: true });
 
   console.log('Running `npx rai extract`...');
   await execAsync('npx rai extract');
