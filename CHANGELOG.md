@@ -1,4 +1,4 @@
-# next-auto-intl
+# react-auto-intl
 
 ## 0.4.0
 

@@ -1,11 +1,11 @@
 {
-  "name": "next-auto-intl",
+  "name": "react-auto-intl",
   "version": "0.4.0",
   "description": "Uses AI to automatically internationalize your Next.js app",
   "main": "dist/index.js",
   "bin": {
-    "next-auto-intl": "dist/bin/cli.mjs",
-    "nai": "dist/bin/cli.mjs"
+    "react-auto-intl": "dist/bin/cli.mjs",
+    "rai": "dist/bin/cli.mjs"
   },
   "scripts": {
     "test": "pnpm jest",
@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/edspencer/next-auto-intl.git"
+    "url": "git+https://github.com/edspencer/react-auto-intl.git"
   },
   "files": [
     "dist/",

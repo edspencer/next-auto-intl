@@ -23,16 +23,16 @@ You can opt in or out of any of these steps, and you can run the process any num
 Install the library via npm or yarn:
 
 ```bash
-npm install next-auto-intl
+npm install react-auto-intl
 ```
 
 or
 
 ```bash
-yarn add next-auto-intl
+yarn add react-auto-intl
 ```
 
-By default, `next-auto-intl` will use OpenAI's `gpt-4o-mini` model to perform translations, so you need to have this environment variable set somewhere:
+By default, `react-auto-intl` will use OpenAI's `gpt-4o-mini` model to perform translations, so you need to have this environment variable set somewhere:
 
 ```sh
 OPENAI_API_KEY="your-openai-api-key"
@@ -44,7 +44,7 @@ OPENAI_API_KEY="your-openai-api-key"
 
 ### 1. Basic Configuration
 
-Generate the `next-auto-intl` config file:
+Generate the `react-auto-intl` config file:
 
 ```sh
 npx nai generate
@@ -70,7 +70,7 @@ See further down this file for a full explanation of the various Configuration o
 
 ### 2. Auto-Internationalizing
 
-`next-auto-intl` does 3 things:
+`react-auto-intl` does 3 things:
 
 1. Extracts all user-facing strings in your JSX components and writes them to {baseLanguage}.json
 2. Rewrites JSX with hard-coded strings to pull the value from {someLanguage}.json
@@ -84,7 +84,7 @@ npx nai run
 
 This will spit out a bunch of logs as it goes through the extraction, rewriting and translation process. It's a good idea to do this on a clean new branch, as the `rewrite` step is going to modify your source code (see example below).
 
-It is safe to run the task any number of times. If you've already started adding `next-intl` to your app, `next-auto-intl` should run just fine to finish the string extract process for you.
+It is safe to run the task any number of times. If you've already started adding `next-intl` to your app, `react-auto-intl` should run just fine to finish the string extract process for you.
 
 After this command has run, you should see `en.json` fully populated, all of your JSX React components with hard-coded strings updated to use the `next-intl` string, and full translation files also created for whichever languages you specified you want support for.
 
@@ -180,7 +180,7 @@ export const GuestModeMessage = ({ delay }: { delay?: number }) => {
 
 ### 4. Configuration
 
-Pass a configuration object to customize the behavior of **next-auto-intl**.
+Pass a configuration object to customize the behavior of **react-auto-intl**.
 
 ```typescript
 export type Configuration = {
@@ -243,7 +243,7 @@ This will create a `{someLanguage}.json` file for each language in the `targetLa
 
 ## Contributing
 
-Contributions are welcome! Please open issues or submit pull requests on the [GitHub repository](https://github.com/edspencer/next-auto-intl).
+Contributions are welcome! Please open issues or submit pull requests on the [GitHub repository](https://github.com/edspencer/react-auto-intl).
 
 ---
 

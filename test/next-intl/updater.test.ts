@@ -94,13 +94,13 @@ const itemsComponentStrings: ComponentStrings = {
   file: '',
   strings: [
     {
-      file: '/Users/ed/Code/next-auto-intl/test/fixtures/next-intl/Items.tsx',
+      file: path.resolve(__dirname, '..', 'fixtures/next-intl/Items.tsx'),
       componentName: 'Items',
       string: 'Loading...',
       identifier: 'loading',
     },
     {
-      file: '/Users/ed/Code/next-auto-intl/test/fixtures/next-intl/Items.tsx',
+      file: path.resolve(__dirname, '..', 'fixtures/next-intl/Items.tsx'),
       componentName: 'Items',
       string: 'Items',
       identifier: 'items',
