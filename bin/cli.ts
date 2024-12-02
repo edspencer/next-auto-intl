@@ -126,8 +126,6 @@ async function getConfig() {
     'auto-intl.config.js'
   );
 
-  console.log(configFilePath);
-
   if (!fs.existsSync(configFilePath)) {
     console.error('Config file not found');
     process.exit(1);
@@ -137,10 +135,6 @@ async function getConfig() {
     const config = await import(configFilePath);
 
     const projectConfig = config.default ? config.default : config;
-
-    console.log('boo');
-    console.log(projectConfig);
-    console.log(createConfiguration(projectConfig));
 
     return createConfiguration(projectConfig);
   } catch (error) {
