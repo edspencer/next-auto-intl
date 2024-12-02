@@ -44,7 +44,6 @@ jobs:
 
   integration:
     runs-on: ubuntu-latest
-    needs: test
 
     steps:
       - name: Checkout code
@@ -69,7 +68,7 @@ jobs:
       - name: Run Integration Tests
         env:
           OPENAI_API_KEY: nope
-        run: npx tsx integration-test.ts
+        run: pnpm run integration-test
 
   release:
     name: Release

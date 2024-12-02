@@ -17,7 +17,7 @@
   },
   "scripts": {
     "test": "pnpm jest",
-    "integration-test": "ts-node test/integration.ts",
+    "integration-test": "tsx integration.ts",
     "build": "tsc && rollup -c",
     "build:watch": "concurrently \"tsc --watch\" \"rollup -c --watch\"",
     "ci:version": "changeset version",
