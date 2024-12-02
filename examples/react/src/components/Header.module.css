@@ -1,0 +1,12 @@
+.header {
+  background: var(--primary-color);
+  color: white;
+  padding: 1rem;
+  text-align: center;
+  border-radius: 8px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+}

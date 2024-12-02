@@ -107,7 +107,10 @@ export async function rewriteComponent(
   const updated = targetLibrary.updateSource(source, component.strings);
 
   try {
-    fs.writeFileSync(component.file, formatWithPrettier(updated));
+    fs.writeFileSync(
+      component.file,
+      lintAfterRewrite ? formatWithPrettier(updated) : updated
+    );
   } catch (e) {
     console.error('Error writing file');
     console.error(e);
@@ -150,8 +153,15 @@ export async function processComponent(
 //with prettier, without much cost
 function formatWithPrettier(code: string): string {
   const prettierPath = path.resolve('./node_modules/.bin/prettier');
-  return execSync(`${prettierPath} --parser typescript`, {
-    input: code,
-    encoding: 'utf-8',
-  }).trim();
+
+  try {
+    return execSync(`${prettierPath} --parser typescript`, {
+      input: code,
+      encoding: 'utf-8',
+    }).trim();
+  } catch (e) {
+    console.error('Error running prettier');
+    console.error(e);
+    return code;
+  }
 }

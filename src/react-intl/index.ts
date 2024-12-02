@@ -9,6 +9,10 @@ import {
 import { ReactIntlExtractor } from './extractor';
 import { ReactIntlUpdater } from './updater';
 
+import deepmerge from 'deepmerge';
+import fs from 'fs';
+import path from 'path';
+
 export const ReactIntlTargetLibrary: TargetLibrary = {
   extractStrings(
     ast: t.File,
@@ -28,13 +32,32 @@ export const ReactIntlTargetLibrary: TargetLibrary = {
     return updater.updateSource();
   },
 
-  saveTranslations(
+  async saveTranslations(
     messages: MessagesObject,
     locale: string,
     config: Configuration
   ): Promise<void> {
-    // Existing implementation
+    const { messagesDir } = config;
+    // Ensure the messages directory exists
+    fs.mkdirSync(messagesDir, { recursive: true });
 
-    return Promise.resolve();
+    //load the existing messages
+    let existingMessages = {};
+
+    const localeFile = path.join(config.messagesDir!, `${locale}.json`);
+    console.log('loading existing translations from', localeFile);
+    try {
+      existingMessages = JSON.parse(fs.readFileSync(localeFile, 'utf8'));
+    } catch (e) {
+      console.log(`No existing messages found for locale ${locale}`);
+    }
+
+    //merge the new messages with the existing ones
+    const newMessages = deepmerge(existingMessages, messages);
+
+    console.log('saving translations to', localeFile);
+
+    //save the new messages
+    fs.writeFileSync(localeFile, JSON.stringify(newMessages, null, 2));
   },
 };

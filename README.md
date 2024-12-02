@@ -47,7 +47,7 @@ OPENAI_API_KEY="your-openai-api-key"
 Generate the `react-auto-intl` config file:
 
 ```sh
-npx nai generate
+npx rai generate
 ```
 
 This will create `i18n/auto-intl.config.mjs`, which looks like this by default:
@@ -79,7 +79,7 @@ See further down this file for a full explanation of the various Configuration o
 To do all 3, run this command:
 
 ```sh
-npx nai run
+npx rai run
 ```
 
 This will spit out a bunch of logs as it goes through the extraction, rewriting and translation process. It's a good idea to do this on a clean new branch, as the `rewrite` step is going to modify your source code (see example below).
@@ -206,7 +206,7 @@ export type Configuration = {
 To just scan for internationalizable strings in your project without modifying any files, just run this command:
 
 ```sh
-npx nai scan
+npx rai scan
 ```
 
 #### extract
@@ -214,7 +214,7 @@ npx nai scan
 To just extract all the detected strings in your JSX components and write them to `i18n/messages/en.json` (assuming your configured `baseLanguage` is set to `en`), just run this command:
 
 ```sh
-npx nai extract
+npx rai extract
 ```
 
 It is safe to run the task any number of times.
@@ -226,7 +226,7 @@ The `rewrite` phase iterates through all of strings in `i18n/messages/en.json` a
 To just run the `rewrite` phase:
 
 ```sh
-npx nai rewrite
+npx rai rewrite
 ```
 
 It is safe to run the task any number of times.
@@ -236,7 +236,7 @@ It is safe to run the task any number of times.
 You can just run the `translate` command if you don't want to re-scan/rewrite your JSX files. Useful when adding another language to `targetLanguages`, for example:
 
 ```sh
-npx nai translate
+npx rai translate
 ```
 
 This will create a `{someLanguage}.json` file for each language in the `targetLanguages` config array. If some or all all expected translations for the target language already exist, it will not re-translate them, just the strings it doesn't have a translation for currently.

@@ -42,11 +42,46 @@ jobs:
           OPENAI_API_KEY: nope
         run: npx jest
 
+  integration:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.7.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build Project
+        run: pnpm build
+
+      - name: Run Integration Tests
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: pnpm run integration-test
+
   release:
     name: Release
     runs-on: ubuntu-latest
-    needs: test
+    needs:
+      - test
+      - integration
     if: github.ref == 'refs/heads/main' # Only run this job on the main branch
+
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4

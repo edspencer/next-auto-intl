@@ -5,8 +5,11 @@ import * as babelGenerate from '@babel/generator';
 import { BaseUpdater } from '../updater/baseUpdater';
 import { StringInfo } from '../types';
 
-const traverse = babelTraverse.default || babelTraverse;
-const generate = babelGenerate.default || babelGenerate;
+let traverse = babelTraverse.default || babelTraverse;
+traverse = (traverse as any).default || traverse;
+
+let generate = babelGenerate.default || babelGenerate;
+generate = (generate as any).default || generate;
 
 /**
  * Updates React components by replacing hardcoded strings
