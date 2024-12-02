@@ -41,22 +41,47 @@ const watchConfig = {
 
 export default [
   // Library Build
+  // {
+  //   input: './src/index.ts',
+  //   output: [
+  //     {
+  //       file: './dist/index.esm.js',
+  //       format: 'esm',
+  //       sourcemap: true,
+  //       entryFileNames: '[name].mjs',
+  //     },
+  //     {
+  //       file: './dist/index.cjs.js',
+  //       format: 'cjs',
+  //       sourcemap: true,
+  //       entryFileNames: '[name].cjs',
+  //     },
+  //   ],
+  //   plugins,
+  //   external: externalDependencies,
+  //   watch: watchConfig,
+  // },
+
+  // ESM Build
   {
-    input: './src/index.ts',
-    output: [
-      {
-        file: './dist/index.esm.js',
-        format: 'esm',
-        sourcemap: true,
-        entryFileNames: '[name].mjs',
-      },
-      {
-        file: './dist/index.cjs.js',
-        format: 'cjs',
-        sourcemap: true,
-        entryFileNames: '[name].cjs',
-      },
-    ],
+    input: 'src/index.ts',
+    output: {
+      file: 'dist/index.js',
+      format: 'esm',
+      sourcemap: true,
+    },
+    plugins,
+    external: externalDependencies,
+    watch: watchConfig,
+  },
+  // CommonJS Build
+  {
+    input: 'src/index.ts',
+    output: {
+      file: 'dist/index.cjs.js',
+      format: 'cjs',
+      sourcemap: true,
+    },
     plugins,
     external: externalDependencies,
     watch: watchConfig,
@@ -69,7 +94,7 @@ export default [
       dir: './dist/bin', // Output directory for CLI files
       format: 'esm', // CLI as ESM (produces .mjs)
       sourcemap: true,
-      entryFileNames: '[name].mjs', // Ensure CLI filename matches conventions
+      entryFileNames: '[name].mjs',
     },
     plugins: [
       peerDepsExternal(),

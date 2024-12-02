@@ -1,8 +1,16 @@
 {
   "name": "react-auto-intl",
   "version": "0.5.0",
-  "description": "Uses AI to automatically internationalize your Next.js app",
-  "main": "dist/index.js",
+  "description": "Uses AI to automatically internationalize your React and Next.js apps",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs.js"
+    }
+  },
   "bin": {
     "react-auto-intl": "dist/bin/cli.mjs",
     "rai": "dist/bin/cli.mjs"
@@ -21,8 +29,7 @@
   },
   "files": [
     "dist/",
-    "bin/",
-    "src/"
+    "bin/"
   ],
   "keywords": [
     "react",
@@ -32,7 +39,6 @@
     "translate",
     "i18n"
   ],
-  "type": "module",
   "author": "Ed Spencer",
   "license": "MIT",
   "dependencies": {
