@@ -209,13 +209,4 @@ export class NextIntlUpdater extends BaseUpdater {
       }
     }
   }
-
-  /**
-   * Checks if a JSX attribute is user-facing (e.g., alt, title).
-   * Overrides the method from BaseUpdater if necessary.
-   */
-  protected isUserFacingAttribute(attrName: string): boolean {
-    const userFacingAttributes = ['alt', 'title', 'placeholder', 'aria-label'];
-    return userFacingAttributes.includes(attrName);
-  }
 }

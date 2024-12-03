@@ -27,6 +27,16 @@ export class NextIntlExtractor extends BaseExtractor {
             // Ensure the parent is a JSXElement
             if (!t.isJSXElement(parent)) return;
 
+            // Check if the parent element is a non-user-facing element, like <style> or <script>
+            const openingElement = parent.openingElement;
+            if (t.isJSXIdentifier(openingElement.name)) {
+              const tagName = openingElement.name.name;
+              const nonUserFacingElements = ['style', 'script'];
+              if (nonUserFacingElements.includes(tagName)) {
+                return; // Skip non-user-facing elements
+              }
+            }
+
             // Determine if the text node is the only child of its parent
             const isOnlyChild =
               parent.children.filter((child) => t.isJSXText(child)).length ===
@@ -113,6 +123,20 @@ export class NextIntlExtractor extends BaseExtractor {
             // Skip visited nodes
             if (visitedNodes.has(exprPath.node)) return;
 
+            // Check if parent is a user-facing attribute
+            const parentNode = exprPath.parentPath?.node;
+
+            if (
+              t.isJSXAttribute(parentNode) &&
+              t.isJSXIdentifier(parentNode.name)
+            ) {
+              const attrName = parentNode.name.name;
+              if (!this.isUserFacingAttribute(attrName)) {
+                return; // Skip non-user-facing attributes
+              }
+            }
+
+            // Proceed with extracting strings from expression if in user-facing context
             if (t.isStringLiteral(expression)) {
               // Handle string literals like {'text'}
               const textValue = expression.value.trim();

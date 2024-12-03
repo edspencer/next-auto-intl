@@ -1,5 +1,4 @@
 [] Check that strings are not urls or email addresses (or phone numbers?) - don't translate if so
-[] NonMemoizedMarkdown is leaking a tailwind config string
 [] Would be nice to have a way to mark strings not to extract/rewrite (e.g. "helpmefind.ai" - not a url but also not translatable)
 [] Support decorator to translate strings inside non-JSX JS objects (see also https://lingui.dev/guides/message-extraction#explicitly-marking-messages)
 [] Let most of the functions like translateComponent be overridable in Configuration object, but default to react-auto-intl's implementation. Allows dev to override any part of the logic
@@ -7,3 +6,4 @@
 [] winston logger
 [] error handling for parsing invalid JS/TS/JSX/TSX files
 [] error handling/surface/retry to broken calls to LLMs
+[] Docusaurus site

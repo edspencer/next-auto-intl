@@ -22,6 +22,21 @@ export class ReactIntlExtractor extends BaseExtractor {
             JSXText: (textPath) => {
               if (visitedNodes.has(textPath.node)) return;
 
+              const parent = textPath.parent;
+
+              // Ensure the parent is a JSXElement
+              if (!t.isJSXElement(parent)) return;
+
+              // Check if the parent element is a non-user-facing element, like <style> or <script>
+              const openingElement = parent.openingElement;
+              if (t.isJSXIdentifier(openingElement.name)) {
+                const tagName = openingElement.name.name;
+                const nonUserFacingElements = ['style', 'script'];
+                if (nonUserFacingElements.includes(tagName)) {
+                  return; // Skip non-user-facing elements
+                }
+              }
+
               const textValue = textPath.node.value.trim();
 
               if (textValue && /[a-zA-Z]/.test(textValue)) {
@@ -93,7 +108,21 @@ export class ReactIntlExtractor extends BaseExtractor {
             JSXExpressionContainer: (exprPath) => {
               const expression = exprPath.node.expression;
 
+              // Skip visited nodes
               if (visitedNodes.has(exprPath.node)) return;
+
+              // Check if parent is a user-facing attribute
+              const parentNode = exprPath.parentPath?.node;
+
+              if (
+                t.isJSXAttribute(parentNode) &&
+                t.isJSXIdentifier(parentNode.name)
+              ) {
+                const attrName = parentNode.name.name;
+                if (!this.isUserFacingAttribute(attrName)) {
+                  return; // Skip non-user-facing attributes
+                }
+              }
 
               if (t.isStringLiteral(expression)) {
                 const textValue = expression.value.trim();

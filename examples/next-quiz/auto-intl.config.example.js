@@ -1,5 +1,3 @@
-// import path from 'path';
-
 const config = {
   scanDirs: ['./src'],
   baseLanguage: 'en',

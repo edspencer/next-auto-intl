@@ -13,7 +13,9 @@ import { createConfiguration } from '../src/utils/configurationTools';
 
 program
   .name('react-auto-intl')
-  .description('AI-driven automatic internationalization for your Next.js app')
+  .description(
+    'AI-driven automatic internationalization for your React or Next.js app'
+  )
   .version('1.0.0');
 
 program
