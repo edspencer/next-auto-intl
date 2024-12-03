@@ -7,6 +7,6 @@ const config = {
 
   rewriteSourceFiles: true,
   lintAfterRewrite: true,
-};
 
-export default config;
+  targetLibrary: 'next-intl',
+};

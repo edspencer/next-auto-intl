@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { program } from 'commander';
-import fs from 'fs';
+import fs from 'fs-extra';
 import path, { dirname } from 'path';
 
 import { fileURLToPath } from 'url';
@@ -34,19 +34,27 @@ program
     );
 
     // const answers = await inquirer.prompt(questions);
-
+    const configFilename = getConfigFilename();
     const appConfigFileDir = path.resolve(process.cwd(), 'i18n');
-    const appConfigFilePath = path.resolve(
-      appConfigFileDir,
-      'auto-intl.config.js'
-    );
+    const appConfigFilePath = path.resolve(appConfigFileDir, configFilename);
 
     fs.mkdirSync(appConfigFileDir, { recursive: true });
 
-    fs.writeFileSync(
-      appConfigFilePath,
-      fs.readFileSync(path.resolve(__dirname, './default-config.js'))
+    const config = fs.readFileSync(
+      path.resolve(__dirname, './default-config.js')
     );
+
+    // Locate the target project's package.json
+    let isESModule = isEsProject();
+
+    // Determine the export syntax
+    const exportStatement = isESModule
+      ? `export default config;`
+      : `module.exports = config;`;
+
+    const configFileContent = `${config}\n${exportStatement}\n`;
+
+    fs.writeFileSync(appConfigFilePath, configFileContent);
     console.log(`Config file created at ${appConfigFilePath}`);
   });
 
@@ -123,7 +131,7 @@ async function getConfig() {
   const configFilePath = path.resolve(
     process.cwd(),
     'i18n',
-    'auto-intl.config.js'
+    getConfigFilename()
   );
 
   if (!fs.existsSync(configFilePath)) {
@@ -141,4 +149,25 @@ async function getConfig() {
     console.error(`Error loading config file at ${configFilePath}:`, error);
     process.exit(1);
   }
+}
+
+function isEsProject() {
+  const targetPackageJsonPath = path.join(process.cwd(), 'package.json');
+  try {
+    const packageJson = fs.readJsonSync(targetPackageJsonPath);
+    return packageJson.type === 'module';
+  } catch (error) {
+    console.warn(
+      `Warning: Could not read package.json at ${targetPackageJsonPath}. Defaulting to CommonJS.`
+    );
+    return false;
+  }
+}
+
+function getConfigExtension() {
+  return isEsProject() ? 'mjs' : 'js';
+}
+
+function getConfigFilename() {
+  return `auto-intl.config.${getConfigExtension()}`;
 }

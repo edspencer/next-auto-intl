@@ -68,7 +68,13 @@ async function testApplication(appName: string) {
     appName,
     'auto-intl.config.example.js'
   );
-  const targetConfigPath = path.join(tempDir, 'i18n', 'auto-intl.config.js');
+
+  const configFileExtension = appName === 'react' ? 'mjs' : 'js';
+  const targetConfigPath = path.join(
+    tempDir,
+    'i18n',
+    `auto-intl.config.${configFileExtension}`
+  );
 
   // Assert that the config file exists
   console.log('Checking that auto-intl.config.js exists...');

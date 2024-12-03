@@ -12,4 +12,4 @@ const config = {
   targetLibrary: 'next-intl',
 };
 
-export default config;
+module.exports = config;
