@@ -1,12 +1,15 @@
+// import path from 'path';
+
 const config = {
-  scanDirs: ['./app', './components'],
+  scanDirs: ['./src'],
   baseLanguage: 'en',
   targetLanguages: ['pt'],
   messagesDir: './i18n/messages',
   allowDuplicateComponentNames: true,
 
   rewriteSourceFiles: true,
-  lintAfterRewrite: true,
+  lintAfterRewrite: false,
+  targetLibrary: 'react-intl',
 };
 
 export default config;
