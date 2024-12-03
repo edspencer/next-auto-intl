@@ -1,6 +1,6 @@
 {
   "name": "react-auto-intl",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Uses AI to automatically internationalize your React and Next.js apps",
   "main": "./dist/index.cjs.js",
   "module": "./dist/index.js",
