@@ -1,5 +1,11 @@
 # react-auto-intl
 
+## 0.5.1
+
+### Patch Changes
+
+- 212b300: Fixed CJS build issues
+
 ## 0.5.0
 
 ### Minor Changes
