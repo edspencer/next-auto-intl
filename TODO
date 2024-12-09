@@ -7,3 +7,4 @@
 [] error handling for parsing invalid JS/TS/JSX/TSX files
 [] error handling/surface/retry to broken calls to LLMs
 [] Docusaurus site
+[] Mechanism to invalidate some/all keys (e.g. string in baseLanguage changed, so need to create new translations for targetLanguages)

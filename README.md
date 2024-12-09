@@ -61,6 +61,7 @@ const config = {
   messagesDir: './i81n/messages', // Directory to store translation JSON files
   rewriteSourceFiles: true, // Enable source file updates
   lintAfterRewrite: true, // Run eslint --fix after rewriting files
+  targetLibrary: 'next-intl', // You could also choose react-intl
 };
 
 export default config;
@@ -68,7 +69,13 @@ export default config;
 
 See further down this file for a full explanation of the various Configuration options.
 
-### 2. Auto-Internationalizing
+### 2. Set up next-intl or react-intl
+
+If you're using Next JS, the [next-intl](https://next-intl-docs.vercel.app/) library is probably best for you. It saves JSON files in an `i18n` directory inside your app (the same place the `auto-intl.config.mjs` file lives). Setting up `next-intl` takes about 2 minutes - see their [getting started guide](https://next-intl-docs.vercel.app/docs/getting-started) for how to do that.
+
+If you're using React without Next JS, we also have support for [react-intl](https://formatjs.github.io/docs/getting-started/installation/). Setting that up also takes a couple of minutes. `react-auto-intl` is designed to be extensible, so support for other libraries like Lingui is possible.
+
+### 3. Auto-Internationalize your app
 
 `react-auto-intl` does 3 things:
 
@@ -88,7 +95,7 @@ It is safe to run the task any number of times. If you've already started adding
 
 After this command has run, you should see `en.json` fully populated, all of your JSX React components with hard-coded strings updated to use the `next-intl` string, and full translation files also created for whichever languages you specified you want support for.
 
-### 3. Example Output
+### 4. Example Output
 
 Let's say you have this component:
 
@@ -178,7 +185,7 @@ export const GuestModeMessage = ({ delay }: { delay?: number }) => {
 
 ---
 
-### 4. Configuration
+### 5. Configuration
 
 Pass a configuration object to customize the behavior of **react-auto-intl**.
 
@@ -194,12 +201,13 @@ export type Configuration = {
   deleteUnusedTranslations?: boolean; // Delete unused keys from JSON files
   componentWhitelist?: string[]; // Only process specific components
   parallelTranslations: 5; //max number of parallelization jobs to run in parallel
+  targetLibrary: string; //either 'next-intl' or 'react-intl' at the moment
 };
 ```
 
 ---
 
-### 5. Other CLI commands
+### 6. Other CLI commands
 
 #### scan
 
